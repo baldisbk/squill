@@ -1,0 +1,33 @@
+#include <QApplication>
+#include <QFile>
+
+#include "gsmainwindow.h"
+
+#include "gsbutton.h"
+#include "gslabel.h"
+#include "gslineedit.h"
+
+int main(int argc, char *argv[])
+{
+	QApplication app(argc, argv);
+
+	QXmlStreamReader reader;
+	SourceItem src;
+	QFile file((argc > 1) ? argv[1] : "test.xml");
+	if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		reader.setDevice(&file);
+		while (reader.readNext() != QXmlStreamReader::StartElement) {}
+		src.read(reader);
+	}
+
+	GSObjectFactory* fak = GSObjectFactory::factory();
+	fak->registerBuilder("button", new GSButtonBuilder);
+	fak->registerBuilder("label", new GSLabelBuilder);
+	fak->registerBuilder("linedit", new GSLineEditBuilder);
+
+	GSMainWindow mw;
+	mw.loadSource(&src);
+	mw.run();
+
+	return app.exec();
+}

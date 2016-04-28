@@ -1,0 +1,5 @@
+<main>
+	<class name="testbutton" parent="button" caption="#test" />
+	<testbutton x="1" y="1" name="button" />
+	<label x="1" y="2" name="label" label="@button.caption" />
+</main>
