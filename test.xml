@@ -1,5 +1,23 @@
 <main>
-	<class name="testbutton" parent="button" caption="#test" />
-	<testbutton x="1" y="1" name="button" />
+	<database
+		name="sqlite"
+		dbName="test.sqlite"
+		dbType="QSQLITE"
+	/>
+	<database
+		name="mysql"
+		dbHost="localhost"
+		dbUser="root"
+		dbPswd="for(;a!=b;)"
+		dbName="testdb"
+		dbType="QMYSQL"
+	/>
+	<query database="mysql" name="testquery">
+		select * from testtable
+	</query>
+	<class name="testbutton" parent="button" caption="@value" />
+	<testbutton x="1" y="1" name="button" caption="@value" />
+	<connect src="button" dst="testquery" signal="clicked" slot="exec" />
+	<connect dst="mysql" signal="shown" slot="open" />
 	<label x="1" y="2" name="label" label="@button.caption" />
 </main>

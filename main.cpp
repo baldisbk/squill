@@ -3,6 +3,9 @@
 
 #include "gsmainwindow.h"
 
+#include "gsdatabase.h"
+#include "gsquery.h"
+
 #include "gsbutton.h"
 #include "gslabel.h"
 #include "gslineedit.h"
@@ -21,6 +24,10 @@ int main(int argc, char *argv[])
 	}
 
 	GSObjectFactory* fak = GSObjectFactory::factory();
+
+	fak->registerBuilder("database", new GSDatabaseBuilder);
+	fak->registerBuilder("query", new GSQueryBuilder);
+
 	fak->registerBuilder("button", new GSButtonBuilder);
 	fak->registerBuilder("label", new GSLabelBuilder);
 	fak->registerBuilder("linedit", new GSLineEditBuilder);

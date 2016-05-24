@@ -10,6 +10,7 @@ GSMainWindow::GSMainWindow(GSObject */*parent*/)
 	mMW->setCentralWidget(new QWidget(mMW));
 	mGrid = new QGridLayout(mMW->centralWidget());
 	mMW->centralWidget()->setLayout(mGrid);
+	setName(type());
 }
 
 QWidget *GSMainWindow::widget() const
@@ -32,6 +33,7 @@ QString GSMainWindow::type() const
 void GSMainWindow::run()
 {
 	mMW->show();
+	emit shown();
 }
 
 QQmlContext *GSMainWindow::makeRootQmlContext()

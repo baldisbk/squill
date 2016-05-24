@@ -9,6 +9,7 @@
 
 class GSMainWindow : public GSObject
 {
+	Q_OBJECT
 public:
 	GSMainWindow(GSObject* parent = NULL);
 
@@ -18,6 +19,9 @@ public:
 
 public slots:
 	void run();
+
+signals:
+	void shown();
 
 protected:
 	virtual QQmlContext *makeRootQmlContext();

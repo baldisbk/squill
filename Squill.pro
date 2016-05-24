@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick core gui widgets
+QT += qml quick core gui widgets sql
 
 SOURCES += main.cpp \
     sourceparser.cpp \
@@ -10,7 +10,9 @@ SOURCES += main.cpp \
     gscontext.cpp \
     gslabel.cpp \
     gslineedit.cpp \
-    gsmainwindow.cpp
+    gsmainwindow.cpp \
+    gsdatabase.cpp \
+    gsquery.cpp
 
 RESOURCES += qml.qrc
 
@@ -28,7 +30,9 @@ HEADERS += \
     gscontext.h \
     gslabel.h \
     gslineedit.h \
-    gsmainwindow.h
+    gsmainwindow.h \
+    gsdatabase.h \
+    gsquery.h
 
 DISTFILES += \
     test.xml
