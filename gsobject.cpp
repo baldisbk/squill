@@ -38,9 +38,9 @@ bool GSObject::loadSource(SourceItem *item)
 
 	foreach(SourceAttr attr, item->attributes)
 		if (attr.type == attrValue)
-			object()->setProperty(attr.name.toLatin1(), attr.value);
+			setGSProperty(attr.name, attr.value);
 	if (!setContents(item->contents))
-		;// TODO report problem
+	{}// TODO report problem
 
 	QList<SourceItem*> children = item->children.values();
 
@@ -82,10 +82,10 @@ bool GSObject::loadSource(SourceItem *item)
 	// connect and bind this
 	foreach(SourceConnect connect, item->connects)
 		if (!makeConnection(connect))
-			;// TODO report problem
+		{}// TODO report problem
 	foreach(SourceBind binding, item->bindings)
 		if (!makeBinding(binding))
-			;//TODO report problem
+		{}//TODO report problem
 	// TODO embedded scripts for properties
 	return true;
 }
@@ -97,10 +97,14 @@ void GSObject::setLocalObject(const QString &name, GSObject *obj)
 	mLocalContext.insert(name, obj);
 	if (name.isEmpty())
 		return;
+	// TODO check if it can be replaced with
+	// setGSProperty
+	// (if setContextProperty param is replaceable with QVariant)
 	object()->setProperty(
 		name.toLatin1(), QVariant::fromValue(obj->object()));
 	if (qmlContext())
 		qmlContext()->setContextProperty(name, obj->object());
+	emit gsPropertyChanged(name);
 }
 
 QStringList GSObject::localObjects() const
@@ -239,8 +243,9 @@ void GSObject::removeBinding(QString dst)
 
 PropertyListener* GSObject::bindProperty(QString obj, QString src, QString dst)
 {
-	// TODO empty name is either context or this
-	QObject* snd = localObject(obj)->object();
+	GSObject* gsSnd = localObject(obj);
+	if (!gsSnd) return NULL;
+	QObject* snd = gsSnd->object();
 	if (!snd) return NULL;
 	int sindex = snd->metaObject()->indexOfProperty(src.toLatin1());
 	QMetaProperty sprop = snd->metaObject()->property(sindex);
@@ -253,14 +258,14 @@ PropertyListener* GSObject::bindProperty(QString obj, QString src, QString dst)
 		if (!mBinding.contains(snd))
 			snd->installEventFilter(this);
 		mBinding[snd][src].append(dst);
-		mListeners[dst] = new PropertyListener(snd, src, object(), dst);
+		mListeners[dst] = new PropertyListener(gsSnd, src, this, dst);
 		mListeners[dst]->setDynamic(true);
 		// do NOT connect
 		// fcuk property exist check
 		return mListeners[dst];
 	}
 	removeBinding(dst);
-	PropertyListener* l = new PropertyListener(snd, src, object(), dst);
+	PropertyListener* l = new PropertyListener(gsSnd, src, this, dst);
 	connect(snd, sigName.toLatin1().data(), l, SLOT(notify()));
 	mListeners[dst] = l;
 	return l;
@@ -291,6 +296,7 @@ QString GSObject::name() const
 void GSObject::setName(const QString &name)
 {
 	mName = name;
+	object()->setObjectName(name);
 }
 
 bool GSObject::setContents(const QString& /*contents*/)
@@ -300,8 +306,12 @@ bool GSObject::setContents(const QString& /*contents*/)
 
 bool GSObject::makeConnection(SourceConnect connection)
 {
-	QObject* snd = localObject(connection.sender)->object();
-	QObject* rcv = localObject(connection.receiver)->object();
+	GSObject* gsSnd = localObject(connection.sender);
+	GSObject* gsRcv = localObject(connection.receiver);
+	if (!gsSnd || !gsRcv)
+		return false;
+	QObject* snd = gsSnd->object();
+	QObject* rcv = gsRcv->object();
 	if (snd && rcv)
 		// TODO report problem
 		return connect(
@@ -350,7 +360,7 @@ GSContext *GSObject::makeContext(GSContext */*parent*/)
 ////////////////////////////////////////////////////////
 //////////////// PropertyListener	////////////////
 
-PropertyListener::PropertyListener(QObject *snd, QString sprop, QObject *rcv, QString rprop) :
+PropertyListener::PropertyListener(GSObject *snd, QString sprop, GSObject *rcv, QString rprop) :
 	QObject(rcv), mSnd(snd), mSprop(sprop), mRcv(rcv), mRprop(rprop), mDynamic(false)
 {
 	notify();
@@ -358,7 +368,7 @@ PropertyListener::PropertyListener(QObject *snd, QString sprop, QObject *rcv, QS
 
 void PropertyListener::notify()
 {
-	mRcv->setProperty(mRprop.toLatin1(), mSnd->property(mSprop.toLatin1()));
+	mRcv->setGSProperty(mRprop, mSnd->gsProperty(mSprop));
 	emit notified();
 }
 
@@ -373,12 +383,12 @@ void PropertyListener::setDynamic(bool dynamic)
 }
 
 
-QObject *PropertyListener::sender() const
+GSObject *PropertyListener::sender() const
 {
 	return mSnd;
 }
 
-QObject *PropertyListener::receiver() const
+GSObject *PropertyListener::receiver() const
 {
 	return mRcv;
 }
@@ -510,4 +520,18 @@ GSObjectFactory *GSObjectFactory::factory()
 		return mFactory;
 	else
 		return mFactory = new GSObjectFactory;
+}
+
+
+QVariant gsToScalar(const QVariant &var)
+{
+	// TODO other vector types insert here
+	if (var.type() == QVariant::List) {
+		QVariantList l = var.toList();
+		if (l.isEmpty())
+			return QVariant();
+		else
+			return l.first();
+	}
+	return var;
 }

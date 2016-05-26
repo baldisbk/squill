@@ -7,15 +7,21 @@
 
 #include "sourceparser.h"
 
+#include <QDebug>
+
+QVariant gsToScalar(const QVariant& var);
+
+class GSObject;
+
 class PropertyListener : public QObject {
 	Q_OBJECT
 public:
-	PropertyListener(QObject* sender, QString source, QObject* receiver, QString destination);
+	PropertyListener(GSObject* sender, QString source, GSObject* receiver, QString destination);
 	bool dynamic() const;
 	void setDynamic(bool dynamic);
 
-	QObject *sender() const;
-	QObject *receiver() const;
+	GSObject *sender() const;
+	GSObject *receiver() const;
 	QString source() const;
 	QString destination() const;
 
@@ -26,9 +32,9 @@ signals:
 	void notified();
 
 private:
-	QObject* mSnd;
+	GSObject* mSnd;
 	QString mSprop;
-	QObject* mRcv;
+	GSObject* mRcv;
 	QString mRprop;
 	bool mDynamic;
 };
