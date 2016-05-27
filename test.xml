@@ -19,5 +19,6 @@
 	<testbutton x="1" y="1" name="button" caption="@value" />
 	<connect src="button" dst="testquery" signal="clicked" slot="exec" />
 	<connect dst="mysql" signal="shown" slot="open" />
-	<label x="1" y="2" name="label" label="@button.caption" />
+	<lineedit x="1" y="3" name="editor" />
+	<label x="1" y="2" name="label" label="@editor.text" />
 </main>
