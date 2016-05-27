@@ -10,18 +10,18 @@ class GSButton : public GSWidget {
 public:
 	GSButton(GSObject* parent);
 
-	Q_PROPERTY(QString caption READ caption WRITE setCaption NOTIFY captionChanged)
+	Q_PROPERTY(QVariant caption READ caption WRITE setCaption NOTIFY captionChanged)
 
 	virtual QString type() const;
 	virtual QWidget *widget() const;
 
-	QString caption() const;
+	QVariant caption() const;
 
 public slots:
-	void setCaption(QString caption);
+	void setCaption(QVariant caption);
 
 signals:
-	void captionChanged(QString caption);
+	void captionChanged(QVariant caption);
 	void clicked();
 
 private:

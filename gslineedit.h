@@ -11,18 +11,22 @@ class GSLineEdit : public GSWidget
 public:
 	GSLineEdit(GSObject* parent);
 
-	Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
+	Q_PROPERTY(QVariant text READ text WRITE setText NOTIFY textChanged)
 
 	virtual QString type() const;
 	virtual QWidget *widget() const;
 
-	QString text() const;
+	QVariant text() const;
 
 public slots:
+	void setText(QVariant text);
 	void setText(QString text);
 
 signals:
-	void textChanged(QString text);
+	void textChanged(QVariant text);
+
+private slots:
+	void transformTextSignal(QString value);
 
 private:
 	QLineEdit* mEdit;

@@ -3,7 +3,8 @@
 GSLineEdit::GSLineEdit(GSObject *parent): GSWidget(parent)
 {
 	mEdit = new QLineEdit;
-	connect(mEdit, SIGNAL(textChanged(QString)), this, SLOT(setText(QString)));
+	connect(mEdit, SIGNAL(textChanged(QString)),
+		this, SLOT(transformTextSignal(QString)));
 }
 
 QString GSLineEdit::type() const
@@ -16,9 +17,14 @@ QWidget *GSLineEdit::widget() const
 	return mEdit;
 }
 
-QString GSLineEdit::text() const
+QVariant GSLineEdit::text() const
 {
 	return mEdit->text();
+}
+
+void GSLineEdit::setText(QVariant text)
+{
+	setText(gsToScalar(text).toString());
 }
 
 void GSLineEdit::setText(QString text)
@@ -28,6 +34,11 @@ void GSLineEdit::setText(QString text)
 
 	mEdit->setText(text);
 	emit textChanged(text);
+}
+
+void GSLineEdit::transformTextSignal(QString value)
+{
+	emit textChanged(value);
 }
 
 

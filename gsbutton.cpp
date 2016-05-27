@@ -12,18 +12,20 @@ QWidget *GSButton::widget() const
 	return mButton;
 }
 
-QString GSButton::caption() const
+QVariant GSButton::caption() const
 {
 	return mButton->text();
 }
 
-void GSButton::setCaption(QString name)
+void GSButton::setCaption(QVariant caption)
 {
-	if (mButton->text() == name)
+	QString cap = gsToScalar(caption).toString();
+
+	if (mButton->text() == cap)
 		return;
 
-	mButton->setText(name);
-	emit captionChanged(name);
+	mButton->setText(cap);
+	emit captionChanged(cap);
 }
 
 QString GSButton::type() const

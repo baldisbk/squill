@@ -11,18 +11,18 @@ class GSLabel : public GSWidget
 public:
 	GSLabel(GSObject* parent);
 
-	Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
+	Q_PROPERTY(QVariant label READ label WRITE setLabel NOTIFY labelChanged)
 
 	virtual QWidget *widget() const;
 	virtual QString type() const;
 
-	QString label() const;
+	QVariant label() const;
 
 public slots:
-	void setLabel(QString label);
+	void setLabel(QVariant label);
 
 signals:
-	void labelChanged(QString label);
+	void labelChanged(QVariant label);
 
 private:
 	QLabel* mLabel;

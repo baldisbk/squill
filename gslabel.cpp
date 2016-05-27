@@ -15,18 +15,20 @@ QString GSLabel::type() const
 	return "label";
 }
 
-QString GSLabel::label() const
+QVariant GSLabel::label() const
 {
 	return mLabel->text();
 }
 
-void GSLabel::setLabel(QString label)
+void GSLabel::setLabel(QVariant label)
 {
-	if (mLabel->text() == label)
+	QString lab = gsToScalar(label).toString();
+
+	if (mLabel->text() == lab)
 		return;
 
-	mLabel->setText(label);
-	emit labelChanged(label);
+	mLabel->setText(lab);
+	emit labelChanged(lab);
 }
 
 GSObject *GSLabelBuilder::makeObject(GSObject *parent) const
