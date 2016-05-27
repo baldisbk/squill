@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 
 	fak->registerBuilder("button", new GSButtonBuilder);
 	fak->registerBuilder("label", new GSLabelBuilder);
-	fak->registerBuilder("linedit", new GSLineEditBuilder);
+	fak->registerBuilder("lineedit", new GSLineEditBuilder);
 
 	GSMainWindow mw;
 	mw.loadSource(&src);
