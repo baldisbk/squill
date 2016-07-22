@@ -1,13 +1,13 @@
 #ifndef GSMAINWINDOW_H
 #define GSMAINWINDOW_H
 
-#include "gsobject.h"
+#include "gswidget.h"
 
 #include <QMainWindow>
 #include <QGridLayout>
 #include <QQmlEngine>
 
-class GSMainWindow : public GSObject
+class GSMainWindow : public GSWidget
 {
 	Q_OBJECT
 public:

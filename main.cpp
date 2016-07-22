@@ -10,6 +10,9 @@
 #include "gslabel.h"
 #include "gslineedit.h"
 
+#include "gscolumn.h"
+#include "gstable.h"
+
 int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
@@ -31,6 +34,9 @@ int main(int argc, char *argv[])
 	fak->registerBuilder("button", new GSButtonBuilder);
 	fak->registerBuilder("label", new GSLabelBuilder);
 	fak->registerBuilder("lineedit", new GSLineEditBuilder);
+
+	fak->registerBuilder("table", new GSTableBuilder);
+	fak->registerBuilder("column", new GSColumnBuilder);
 
 	GSMainWindow mw;
 	mw.loadSource(&src);

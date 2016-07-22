@@ -25,14 +25,19 @@ int GSWidget::ySpan() const
 	return mYSpan;
 }
 
+GSWidget *GSWidget::parentWidget() const
+{
+	return qobject_cast<GSWidget*>(gsParent());
+}
+
 void GSWidget::setX(int x)
 {
 	if (mX == x)
 		return;
 
 	mX = x;
-	if (widget() && mY != -1)
-		parent()->addWidget(widget(), this->x(), y(), xSpan(), ySpan());
+	if (widget() && mY != -1 && parentWidget())
+		parentWidget()->addWidget(widget(), x, y(), xSpan(), ySpan());
 	emit xChanged(x);
 }
 
@@ -42,8 +47,8 @@ void GSWidget::setY(int y)
 		return;
 
 	mY = y;
-	if (widget() && mX != -1)
-		parent()->addWidget(widget(), x(), this->y(), xSpan(), ySpan());
+	if (widget() && mX != -1 && parentWidget())
+		parentWidget()->addWidget(widget(), x(), y, xSpan(), ySpan());
 	emit yChanged(y);
 }
 
@@ -53,8 +58,8 @@ void GSWidget::setXSpan(int xSpan)
 		return;
 
 	mXSpan = xSpan;
-	if (widget() && mX != -1 && mY != -1)
-		parent()->addWidget(widget(), x(), y(), this->xSpan(), ySpan());
+	if (widget() && mX != -1 && mY != -1 && parentWidget())
+		parentWidget()->addWidget(widget(), x(), y(), xSpan, ySpan());
 	emit xSpanChanged(xSpan);
 }
 
@@ -64,8 +69,20 @@ void GSWidget::setYSpan(int ySpan)
 		return;
 
 	mYSpan = ySpan;
-	if (widget() && mX != -1 && mY != -1)
-		parent()->addWidget(widget(), x(), y(), xSpan(), this->ySpan());
+	if (widget() && mX != -1 && mY != -1 && parentWidget())
+		parentWidget()->addWidget(widget(), x(), y(), xSpan(), ySpan);
 	emit ySpanChanged(ySpan);
 }
 
+QWidget *GSWidget::widget() const
+{
+	return NULL;
+}
+
+bool GSWidget::addWidget(
+	QWidget */*widget*/,
+	int /*x*/, int /*y*/,
+	int /*xspan*/, int /*yspan*/)
+{
+	return false;
+}

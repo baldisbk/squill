@@ -9,14 +9,14 @@
 
 #include <QDebug>
 
-QVariant gsToScalar(const QVariant& var);
-
 class GSObject;
 
 class PropertyListener : public QObject {
 	Q_OBJECT
 public:
-	PropertyListener(GSObject* sender, QString source, GSObject* receiver, QString destination);
+	PropertyListener(
+		GSObject* sender, QString source,
+		GSObject* receiver, QString destination);
 	bool dynamic() const;
 	void setDynamic(bool dynamic);
 
@@ -45,7 +45,7 @@ class GSObject : public QObject {
 	Q_OBJECT
 public:
 	GSObject(GSObject* parent = NULL);
-	bool loadSource(SourceItem* item);
+	virtual bool loadSource(SourceItem* item);
 
 	GSObject *localObject(const QString &name) const;
 	void setLocalObject(const QString &name, GSObject* obj);
@@ -63,13 +63,10 @@ public:
 	// it is created only if necessary (for QML & JS only)
 	QQmlContext *qmlContext();
 
-	// be so kind to make it in advance!
-	virtual QWidget* widget() const;
 	virtual const QObject *object() const;
 	virtual QObject *object();
-	GSObject *parent() const;
 
-	virtual bool addWidget(QWidget* widget, int x, int y, int xspan = 1, int yspan = 1);
+	GSObject *gsParent() const;
 
 	virtual PropertyListener *bindProperty(QString obj, QString src, QString dst);
 	void removeBinding(QString dst);
@@ -79,7 +76,7 @@ public:
 	void setName(const QString &name);
 
 	virtual QString type() const = 0;
-	virtual bool setContents(const QString& contents);
+	static QVariant gsToScalar(const QVariant& var);
 
 signals:
 	void gsPropertyChanged(const QString& name);
@@ -87,9 +84,10 @@ signals:
 protected:
 	bool makeConnection(SourceConnect connection);
 	bool makeBinding(SourceBind binding);
+	virtual bool setContents(const QString& contents);
 
-	QString signalStr(const QString &signal) const;
-	QString slotStr(const QString &slot) const;
+	static QString signalStr(const QString &signal);
+	static QString slotStr(const QString &slot);
 
 	virtual QQmlContext *makeRootQmlContext();
 	virtual GSContext *makeContext(GSContext *parent = NULL);

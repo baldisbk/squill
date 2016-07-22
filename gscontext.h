@@ -16,7 +16,6 @@ public:
 	// GSObject interface
 public:
 	virtual QString type() const;
-	virtual bool setContents(const QString &contents);
 
 private slots:
 	void notifyQml(const QString& name);

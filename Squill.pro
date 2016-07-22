@@ -12,7 +12,9 @@ SOURCES += main.cpp \
     gslineedit.cpp \
     gsmainwindow.cpp \
     gsdatabase.cpp \
-    gsquery.cpp
+    gsquery.cpp \
+    gstable.cpp \
+    gscolumn.cpp
 
 RESOURCES += qml.qrc
 
@@ -32,7 +34,9 @@ HEADERS += \
     gslineedit.h \
     gsmainwindow.h \
     gsdatabase.h \
-    gsquery.h
+    gsquery.h \
+    gstable.h \
+    gscolumn.h
 
 DISTFILES += \
     test.xml

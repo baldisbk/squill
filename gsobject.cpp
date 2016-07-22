@@ -185,11 +185,6 @@ QQmlContext *GSObject::qmlContext()
 		return NULL;
 }
 
-QWidget *GSObject::widget() const
-{
-	return NULL;
-}
-
 const QObject *GSObject::object() const
 {
 	return this;
@@ -200,17 +195,9 @@ QObject *GSObject::object()
 	return this;
 }
 
-GSObject *GSObject::parent() const
+GSObject *GSObject::gsParent() const
 {
 	return mParent;
-}
-
-bool GSObject::addWidget(
-	QWidget */*widget*/,
-	int /*x*/, int /*y*/,
-	int /*xspan*/, int /*yspan*/)
-{
-	return false;
 }
 
 QString capitalize(QString src)
@@ -330,7 +317,7 @@ bool GSObject::makeBinding(SourceBind binding)
 	return dst->bindProperty(binding.src, binding.srcprop, binding.dstprop);
 }
 
-QString GSObject::signalStr(const QString &signal) const
+QString GSObject::signalStr(const QString &signal)
 {
 	if (signal.contains("("))
 		return QString("2%1").arg(signal);
@@ -338,7 +325,7 @@ QString GSObject::signalStr(const QString &signal) const
 		return QString("2%1()").arg(signal);
 }
 
-QString GSObject::slotStr(const QString &slot) const
+QString GSObject::slotStr(const QString &slot)
 {
 	if (slot.contains("("))
 		return QString("1%1").arg(slot);
@@ -523,7 +510,7 @@ GSObjectFactory *GSObjectFactory::factory()
 }
 
 
-QVariant gsToScalar(const QVariant &var)
+QVariant GSObject::gsToScalar(const QVariant &var)
 {
 	// TODO other vector types insert here
 	if (var.type() == QVariant::List) {

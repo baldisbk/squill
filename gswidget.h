@@ -7,7 +7,7 @@ class GSWidget : public GSObject
 {
 	Q_OBJECT
 public:
-	GSWidget(GSObject* parent);
+	GSWidget(GSObject* parent = NULL);
 
 	Q_PROPERTY(int x READ x WRITE setX NOTIFY xChanged)
 	Q_PROPERTY(int y READ y WRITE setY NOTIFY yChanged)
@@ -18,6 +18,12 @@ public:
 	int y() const;
 	int xSpan() const;
 	int ySpan() const;
+
+	GSWidget* parentWidget() const;
+	virtual QWidget* widget() const;
+	virtual bool addWidget(
+		QWidget* widget, int x, int y,
+		int xspan = 1, int yspan = 1);
 
 public slots:
 	void setX(int x);

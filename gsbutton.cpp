@@ -33,7 +33,6 @@ QString GSButton::type() const
 	return "button";
 }
 
-
 GSObject *GSButtonBuilder::makeObject(GSObject *parent) const
 {
 	return new GSButton(parent);

@@ -12,7 +12,6 @@ public:
 	Q_PROPERTY(QString database READ database WRITE setDatabase NOTIFY databaseChanged)
 
 	virtual QString type() const;
-	virtual bool setContents(const QString &contents);
 
 	QString query() const;
 	QString database() const;
@@ -26,6 +25,9 @@ public slots:
 signals:
 	void queryChanged(QString query);
 	void databaseChanged(QString database);
+
+protected:
+	virtual bool setContents(const QString &contents);
 
 private:
 	QString mQuery;

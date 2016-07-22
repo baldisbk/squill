@@ -4,7 +4,7 @@
 
 #include "gscontext.h"
 
-GSMainWindow::GSMainWindow(GSObject */*parent*/)
+GSMainWindow::GSMainWindow(GSObject */*parent*/): GSWidget()
 {
 	mMW = new QMainWindow;
 	mMW->setCentralWidget(new QWidget(mMW));

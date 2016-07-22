@@ -29,8 +29,3 @@ QString GSContext::type() const
 {
 	return "context";
 }
-
-bool GSContext::setContents(const QString &/*contents*/)
-{
-	return false;
-}
