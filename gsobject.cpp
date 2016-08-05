@@ -230,11 +230,10 @@ void GSObject::removeBinding(QString dst)
 	mListeners.remove(dst);
 }
 
-PropertyListener* GSObject::bindProperty(QString obj, QString src, QString dst)
+PropertyListener* GSObject::bindProperty(GSObject *obj, QString src, QString dst)
 {
-	GSObject* gsSnd = localObject(obj);
-	if (!gsSnd) return NULL;
-	QObject* snd = gsSnd->object();
+	if (!obj) return NULL;
+	QObject* snd = obj->object();
 	if (!snd) return NULL;
 	int sindex = snd->metaObject()->indexOfProperty(src.toLatin1());
 	QMetaProperty sprop = snd->metaObject()->property(sindex);
@@ -247,14 +246,14 @@ PropertyListener* GSObject::bindProperty(QString obj, QString src, QString dst)
 		if (!mBinding.contains(snd))
 			snd->installEventFilter(this);
 		mBinding[snd][src].append(dst);
-		mListeners[dst] = new PropertyListener(gsSnd, src, this, dst);
+		mListeners[dst] = new PropertyListener(obj, src, this, dst);
 		mListeners[dst]->setDynamic(true);
 		// do NOT connect
 		// fcuk property exist check
 		return mListeners[dst];
 	}
 	removeBinding(dst);
-	PropertyListener* l = new PropertyListener(gsSnd, src, this, dst);
+	PropertyListener* l = new PropertyListener(obj, src, this, dst);
 	connect(snd, sigName.toLatin1().data(), l, SLOT(notify()));
 	mListeners[dst] = l;
 	return l;
@@ -313,10 +312,11 @@ bool GSObject::makeConnection(SourceConnect connection)
 bool GSObject::makeBinding(SourceBind binding)
 {
 	GSObject* dst = localObject(binding.dst);
-	if (!dst)
+	GSObject* src = localObject(binding.src);
+	if (!dst || !src)
 		return false; // TODO report problem
 	// TODO report problem
-	return dst->bindProperty(binding.src, binding.srcprop, binding.dstprop);
+	return dst->bindProperty(src, binding.srcprop, binding.dstprop);
 }
 
 QString GSObject::signalStr(const QString &signal)
