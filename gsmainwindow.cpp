@@ -43,5 +43,5 @@ QQmlContext *GSMainWindow::makeRootQmlContext()
 
 GSContext *GSMainWindow::makeContext(GSContext *parent)
 {
-	return new GSContext(/*parent*/);
+	return new GSContext(parent);
 }

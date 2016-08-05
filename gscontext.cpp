@@ -2,7 +2,7 @@
 
 #include <QQmlContext>
 
-GSContext::GSContext()
+GSContext::GSContext(GSObject *parent, GSContext */*parentCtx*/): GSObject(parent)
 {
 	connect(this, SIGNAL(gsPropertyChanged(QString)),
 		this, SLOT(notifyQml(QString)));

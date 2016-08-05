@@ -7,8 +7,7 @@ class GSContext : public GSObject
 {
 	Q_OBJECT
 public:
-	GSContext();
-	//GSContext(GSContext* parent);
+	GSContext(GSObject* parent, GSContext* parentCtx = NULL);
 
 	void bindQmlContext(QQmlContext* context);
 	void unbindQmlContext(QQmlContext* context);

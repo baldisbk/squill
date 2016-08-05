@@ -16,14 +16,14 @@ GSObject::GSObject(GSObject *parent):
 
 bool GSObject::loadSource(SourceItem *item)
 {
-	if (mParent)
-		mContext = mParent->contextObject();
-	else
-		mContext = makeContext();
-
 	if (!item)
 		return false;
 	setName(item->name);
+
+	mContext = makeContext(mParent?mParent->contextObject():NULL);
+	if (!mContext)
+		// TODO report error
+		return false;
 
 	setLocalObject(THIS_RESWORD, this);
 	if (contextObject()) {
@@ -78,7 +78,7 @@ bool GSObject::loadSource(SourceItem *item)
 	// remove local classes
 	foreach(SourceItem* child, item->children) {
 		if (child->type == CLASS_RESWORD)
-			GSObjectFactory::factory()->unregisterBuilder(child);
+			GSObjectFactory::factory()->unregisterBuilder(child->name);
 	}
 
 	// connect and bind this
@@ -340,9 +340,9 @@ QQmlContext *GSObject::makeRootQmlContext()
 	return NULL;
 }
 
-GSContext *GSObject::makeContext(GSContext */*parent*/)
+GSContext *GSObject::makeContext(GSContext *parent)
 {
-	return NULL;
+	return parent;
 }
 
 
@@ -492,15 +492,11 @@ void GSObjectFactory::registerBuilder(SourceItem *item)
 	operator[](item->name).push(parent->makeEnhancedBuilder(item));
 }
 
-void GSObjectFactory::unregisterBuilder(SourceItem *item)
+void GSObjectFactory::unregisterBuilder(QString className)
 {
-	if (!item)
+	if (operator[](className).isEmpty())
 		return;
-	if (item->type != CLASS_RESWORD)
-		return;
-	if (operator[](item->name).isEmpty())
-		return;
-	operator[](item->name).pop();
+	operator[](className).pop();
 }
 
 GSObjectFactory *GSObjectFactory::factory()
