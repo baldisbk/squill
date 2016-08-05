@@ -521,6 +521,12 @@ QVariant GSObject::gsToScalar(const QVariant &var)
 			return QVariant();
 		else
 			return l.first();
+	} else if (var.type() == QVariant::StringList) {
+		QStringList l = var.toStringList();
+		if (l.isEmpty())
+			return QVariant();
+		else
+			return l.first();
 	}
 	return var;
 }
