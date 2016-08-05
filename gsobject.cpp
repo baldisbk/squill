@@ -26,8 +26,10 @@ bool GSObject::loadSource(SourceItem *item)
 	setName(item->name);
 
 	setLocalObject(THIS_RESWORD, this);
-	if (contextObject())
+	if (contextObject()) {
 		setLocalObject(QString(), contextObject());
+		setLocalObject(CONTEXT_RESWORD, contextObject());
+	}
 	if (mParent) {
 		setLocalObject(PARENT_RESWORD, mParent);
 		QStringList siblings = mParent->childrenObjects();

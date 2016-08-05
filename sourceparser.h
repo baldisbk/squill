@@ -8,6 +8,7 @@
 #define CLASS_RESWORD "class"
 #define NAME_RESWORD "name"
 #define THIS_RESWORD "this"
+#define CONTEXT_RESWORD "context"
 
 #define SCRIPT_RESWORD "script"
 #define CONNECT_RESWORD "connect"
