@@ -60,7 +60,7 @@ bool GSObject::loadSource(SourceItem *item)
 		GSObject* obj = GSObjectFactory::factory()->makeObject(child, this);
 		if (!obj)
 			// TODO report problem
-			return false;
+			continue;
 		setLocalObject(child->name, obj);
 		mChildren.append(child->name);
 		SourceItem* newSrc = GSObjectFactory::factory()->makeSource(child);
