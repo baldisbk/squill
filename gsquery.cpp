@@ -10,11 +10,6 @@ GSQuery::GSQuery(GSObject *parent): GSObject(parent)
 {
 }
 
-QString GSQuery::type() const
-{
-	return "query";
-}
-
 bool GSQuery::setContents(const QString &contents)
 {
 	setQuery(contents);
@@ -72,17 +67,4 @@ void GSQuery::setDatabase(QString database)
 
 	mDatabase = database;
 	emit databaseChanged(database);
-}
-
-
-GSObject *GSQueryBuilder::makeObject(GSObject *parent) const
-{
-	return new GSQuery(parent);
-}
-
-GSObjectBuilder *GSQueryBuilder::clone() const
-{
-	GSObjectBuilder *res = new GSQueryBuilder();
-	res->setEnhancement(new SourceItem(enhancement()));
-	return res;
 }

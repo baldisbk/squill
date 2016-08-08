@@ -15,7 +15,6 @@ public:
 
 	virtual QWidget *widget() const;
 	virtual bool addWidget(QWidget *widget, int x, int y, int xspan, int yspan);
-	virtual QString type() const;
 
 public slots:
 	void run();

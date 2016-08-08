@@ -14,7 +14,6 @@ public:
 	Q_PROPERTY(QVariant label READ label WRITE setLabel NOTIFY labelChanged)
 
 	virtual QWidget *widget() const;
-	virtual QString type() const;
 
 	QVariant label() const;
 
@@ -28,12 +27,6 @@ private:
 	QLabel* mLabel;
 };
 
-class GSLabelBuilder : public GSObjectBuilder {
-public:
-	virtual GSObject *makeObject(GSObject *parent) const;
-
-protected:
-	virtual GSObjectBuilder *clone() const;
-};
+DEFINE_GSCLASS(GSLabel, "label")
 
 #endif // GSLABEL_H

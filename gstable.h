@@ -15,7 +15,6 @@ class GSTable : public GSWidget
 public:
 	GSTable(GSObject* parent);
 
-	virtual QString type() const;
 	virtual QWidget *widget() const;
 
 	void appendColumn(GSColumn* column);
@@ -56,12 +55,6 @@ private:
 	QList<QVariantList> mValues;
 };
 
-class GSTableBuilder : public GSObjectBuilder {
-public:
-	virtual GSObject *makeObject(GSObject *parent) const;
-
-protected:
-	virtual GSObjectBuilder *clone() const;
-};
+DEFINE_GSCLASS(GSTable, "table")
 
 #endif // GSTABLE_H

@@ -11,7 +11,6 @@ class GSColumn : public GSObject
 public:
 	GSColumn(GSObject* parent);
 
-	virtual QString type() const;
 	virtual bool loadSource(SourceItem *item);
 
 	Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
@@ -40,13 +39,6 @@ private:
 	QString mHeader;
 };
 
-
-class GSColumnBuilder : public GSObjectBuilder {
-public:
-	virtual GSObject *makeObject(GSObject *parent) const;
-
-protected:
-	virtual GSObjectBuilder *clone() const;
-};
+DEFINE_GSCLASS(GSColumn, "column")
 
 #endif // GSCOLUMN_H

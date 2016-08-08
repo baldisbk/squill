@@ -5,11 +5,6 @@
 GSColumn::GSColumn(GSObject *parent) : GSObject(parent), mHost(NULL)
 {}
 
-QString GSColumn::type() const
-{
-	return "column";
-}
-
 bool GSColumn::loadSource(SourceItem *item)
 {
 	GSObject::loadSource(item);
@@ -64,17 +59,4 @@ void GSColumn::setHeader(QString header)
 
 	mHeader = header;
 	emit headerChanged(header);
-}
-
-
-GSObject *GSColumnBuilder::makeObject(GSObject *parent) const
-{
-	return new GSColumn(parent);
-}
-
-GSObjectBuilder *GSColumnBuilder::clone() const
-{
-	GSObjectBuilder *res = new GSColumnBuilder();
-	res->setEnhancement(new SourceItem(enhancement()));
-	return res;
 }

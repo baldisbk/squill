@@ -28,15 +28,15 @@ int main(int argc, char *argv[])
 
 	GSObjectFactory* fak = GSObjectFactory::factory();
 
-	fak->registerBuilder("database", new GSDatabaseBuilder);
-	fak->registerBuilder("query", new GSQueryBuilder);
+	fak->registerBuilder(new GSDatabaseBuilder);
+	fak->registerBuilder(new GSQueryBuilder);
 
-	fak->registerBuilder("button", new GSButtonBuilder);
-	fak->registerBuilder("label", new GSLabelBuilder);
-	fak->registerBuilder("lineedit", new GSLineEditBuilder);
+	fak->registerBuilder(new GSButtonBuilder);
+	fak->registerBuilder(new GSLabelBuilder);
+	fak->registerBuilder(new GSLineEditBuilder);
 
-	fak->registerBuilder("table", new GSTableBuilder);
-	fak->registerBuilder("column", new GSColumnBuilder);
+	fak->registerBuilder(new GSTableBuilder);
+	fak->registerBuilder(new GSColumnBuilder);
 
 	GSMainWindow mw;
 	mw.loadSource(&src);

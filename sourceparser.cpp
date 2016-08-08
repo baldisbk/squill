@@ -1,10 +1,7 @@
 #include "sourceparser.h"
 
+#include <QStringList>
 #include <QRegExp>
-
-SourceParser::SourceParser()
-{
-}
 
 void SourceItem::read(QXmlStreamReader &reader)
 {
@@ -16,39 +13,13 @@ void SourceItem::read(QXmlStreamReader &reader)
 		if (n == NAME_RESWORD)
 			name = a.value().toString();
 		else {
-			SourceAttr attr;
-			attr.value = a.value().toString();
-			attr.type = attrValue;
+			SourceAttr attr = readAttr(n, a.value().toString());
 			if (attr.value.isEmpty())
 				continue;
-			bool hasSymbol = false;
-			if (attr.value.at(0) == VALUE_SYMBOL) {
-				hasSymbol = true;
-				attr.type = attrValue;
-			} else if (attr.value.at(0) == LINK_SYMBOL) {
-				hasSymbol = true;
-				attr.type = attrScript;
-			}
-			if (hasSymbol)
-				attr.value = attr.value.right(attr.value.length()-1);
-
-			if (attr.type == attrScript) {
-				QRegExp re("(([a-zA-Z_][0-9a-zA-Z_]*\\.)*)([a-zA-Z_][0-9a-zA-Z_]*)");
-				if (re.exactMatch(attr.value)) {
-					SourceBind b;
-					b.dst = THIS_RESWORD;
-					b.dstprop = n;
-					b.src = re.cap(1);
-					if (!b.src.isEmpty())
-						b.src.chop(1);
-					b.srcprop = re.cap(3);
-					bindings.append(b);
-					continue;
-				} else
-					attr.type = attrScript;
-			}
-			attr.name = n;
-			attributes[n] = attr;
+			if (attr.type == attrBind)
+				bindings.append(readLink(attr));
+			else
+				attributes[n] = attr;
 		}
 	}
 	while (reader.readNext() != QXmlStreamReader::EndElement) {
@@ -61,28 +32,12 @@ void SourceItem::read(QXmlStreamReader &reader)
 			if (reader.hasError())
 				return;
 			if (item->type == CONNECT_RESWORD) {
-				SourceConnect c;
-				c.sender = item->attributes[SOURCE_RESWORD].value;
-				c.receiver = item->attributes[DEST_RESWORD].value;
-				c.signal = item->attributes[SIGNAL_RESWORD].value;
-				c.slot = item->attributes[SLOT_RESWORD].value;
-				if (c.sender.isEmpty())
-					c.sender = THIS_RESWORD;
-				if (c.receiver.isEmpty())
-					c.receiver = THIS_RESWORD;
-				connects.append(c);
+				connects.append(item->readLink(
+					SIGNAL_RESWORD, SLOT_RESWORD));
 				break;
 			} else if (item->type == BINDING_RESWORD) {
-				SourceBind b;
-				b.src = item->attributes[SOURCE_RESWORD].value;
-				b.dst = item->attributes[DEST_RESWORD].value;
-				b.srcprop = item->attributes[SRCPROP_RESWORD].value;
-				b.dstprop = item->attributes[DSTPROP_RESWORD].value;
-				if (b.src.isEmpty())
-					b.src = THIS_RESWORD;
-				if (b.dst.isEmpty())
-					b.dst = THIS_RESWORD;
-				bindings.append(b);
+				bindings.append(item->readLink(
+					SRCPROP_RESWORD, DSTPROP_RESWORD));
 				break;
 			}
 			if (children.contains(item->name)) {
@@ -104,4 +59,103 @@ void SourceItem::read(QXmlStreamReader &reader)
 	}
 	// read token AFTER element
 	reader.readNext();
+}
+
+SourceLink SourceItem::readLink(QString sprRW, QString dprRW) const
+{
+	SourceLink b;
+	QString src, dst, srcprop, dstprop;
+	if (attributes.contains(SOURCE_RESWORD))
+		src = attributes[SOURCE_RESWORD].value;
+	if (attributes.contains(DEST_RESWORD))
+		dst = attributes[DEST_RESWORD].value;
+	if (attributes.contains(sprRW))
+		srcprop = attributes[sprRW].value;
+	if (attributes.contains(dprRW))
+		dstprop = attributes[dprRW].value;
+	return readLink(src, srcprop, dst, dstprop);
+}
+
+SourceLink SourceItem::readLink(
+	QString src, QString srcprop, QString dst, QString dstprop)
+{
+	SourceLink link;
+	QStringList sparts = src.split(".");
+	QStringList dparts = dst.split(".");
+
+	if (src.isEmpty()) {
+		link.src = THIS_RESWORD;
+		link.srcprop = srcprop;
+	} else if (srcprop.isEmpty()) {
+		if (!sparts.isEmpty()) {
+			link.srcprop = sparts.last();
+			sparts.removeLast();
+			link.src = sparts.join(".");
+			if (link.src.isEmpty()) {
+				if (sparts.isEmpty())
+					link.src = THIS_RESWORD;
+				else
+					link.src = CONTEXT_RESWORD;
+			}
+		}
+	} else {
+		link.src = src;
+		link.srcprop = srcprop;
+	}
+
+	if (dst.isEmpty()) {
+		link.dst = THIS_RESWORD;
+		link.dstprop = dstprop;
+	} else if (dstprop.isEmpty()) {
+		if (!dparts.isEmpty()) {
+			link.dstprop = dparts.last();
+			dparts.removeLast();
+			link.dst = dparts.join(".");
+			if (link.dst.isEmpty()) {
+				if (dparts.isEmpty())
+					link.dst = THIS_RESWORD;
+				else
+					link.dst = CONTEXT_RESWORD;
+			}
+		}
+	} else {
+		link.dst = dst;
+		link.dstprop = dstprop;
+	}
+	return link;
+}
+
+SourceLink SourceItem::readLink(SourceAttr attr)
+{
+	return readLink(attr.value, QString(), QString(), attr.name);
+}
+
+SourceAttr SourceItem::readAttr(QString n, QString val)
+{
+	SourceAttr attr;
+	// TODO: let class decide whether value or bind is default
+	attr.value = val;
+	attr.name = n;
+	attr.type = attrValue;
+	if (attr.value.isEmpty())
+		return attr;
+	bool hasSymbol = false;
+	if (attr.value.at(0) == VALUE_SYMBOL) {
+		hasSymbol = true;
+		attr.type = attrValue;
+	} else if (attr.value.at(0) == LINK_SYMBOL) {
+		hasSymbol = true;
+		attr.type = attrScript;
+	}
+	if (hasSymbol)
+		attr.value = attr.value.right(attr.value.length()-1);
+
+	if (attr.type == attrScript) {
+		QRegExp re("(([a-zA-Z_][0-9a-zA-Z_]*\\.)*)([a-zA-Z_][0-9a-zA-Z_]*)");
+		if (re.exactMatch(attr.value))
+			attr.type = attrBind;
+		else
+			attr.type = attrScript;
+	}
+	return attr;
 }

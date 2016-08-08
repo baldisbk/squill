@@ -82,10 +82,10 @@ bool GSObject::loadSource(SourceItem *item)
 	}
 
 	// connect and bind this
-	foreach(SourceConnect connect, item->connects)
+	foreach(SourceLink connect, item->connects)
 		if (!makeConnection(connect))
 		{}// TODO report problem
-	foreach(SourceBind binding, item->bindings)
+	foreach(SourceLink binding, item->bindings)
 		if (!makeBinding(binding))
 		{}//TODO report problem
 	// TODO embedded scripts for properties
@@ -292,10 +292,10 @@ bool GSObject::setContents(const QString& /*contents*/)
 	return false;
 }
 
-bool GSObject::makeConnection(SourceConnect connection)
+bool GSObject::makeConnection(SourceLink connection)
 {
-	GSObject* gsSnd = localObject(connection.sender);
-	GSObject* gsRcv = localObject(connection.receiver);
+	GSObject* gsSnd = localObject(connection.src);
+	GSObject* gsRcv = localObject(connection.dst);
 	if (!gsSnd || !gsRcv)
 		return false;
 	QObject* snd = gsSnd->object();
@@ -303,13 +303,13 @@ bool GSObject::makeConnection(SourceConnect connection)
 	if (snd && rcv)
 		// TODO report problem
 		return connect(
-			snd, signalStr(connection.signal).toLatin1(),
-			rcv, slotStr(connection.slot).toLatin1());
+			snd, signalStr(connection.srcprop).toLatin1(),
+			rcv, slotStr(connection.dstprop).toLatin1());
 	else
 		return false; // TODO report problem
 }
 
-bool GSObject::makeBinding(SourceBind binding)
+bool GSObject::makeBinding(SourceLink binding)
 {
 	GSObject* dst = localObject(binding.dst);
 	GSObject* src = localObject(binding.src);
@@ -435,6 +435,7 @@ GSObjectBuilder *GSObjectBuilder::makeEnhancedBuilder(SourceItem *item)
 {
 	GSObjectBuilder* res = clone();
 	res->setEnhancement(makeSource(item));
+	res->setName(item->name);
 	return res;
 }
 
@@ -470,11 +471,11 @@ SourceItem *GSObjectFactory::makeSource(SourceItem *item)
 		return NULL;
 }
 
-void GSObjectFactory::registerBuilder(QString className, GSObjectBuilder *builder)
+void GSObjectFactory::registerBuilder(GSObjectBuilder *builder)
 {
 	if (!builder)
 		return;
-	operator[](className).push(builder);
+	operator[](builder->name()).push(builder);
 }
 
 void GSObjectFactory::registerBuilder(SourceItem *item)
@@ -489,7 +490,8 @@ void GSObjectFactory::registerBuilder(SourceItem *item)
 		return;
 	GSObjectBuilder* parent =
 		value(item->attributes[PARENT_RESWORD].value).top();
-	operator[](item->name).push(parent->makeEnhancedBuilder(item));
+	GSObjectBuilder* child = parent->makeEnhancedBuilder(item);
+	operator[](child->name()).push(child);
 }
 
 void GSObjectFactory::unregisterBuilder(QString className)

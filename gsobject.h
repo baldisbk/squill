@@ -427,8 +427,6 @@ public:
 	 */
 	void setName(const QString &name);
 
-	virtual QString type() const = 0;
-
 	/**
 	 * @brief Преобразование вектора в скаляр.
 	 * Если в качестве аргумента передается вариант векторного типа
@@ -463,13 +461,13 @@ protected:
 	 * @param connection описание соединения
 	 * @return признак успеха
 	 */
-	bool makeConnection(SourceConnect connection);
+	bool makeConnection(SourceLink connection);
 	/**
 	 * @brief Создание привязки свойства.
 	 * @param binding описание привязки
 	 * @return признак успеха
 	 */
-	bool makeBinding(SourceBind binding);
+	bool makeBinding(SourceLink binding);
 	/**
 	 * @brief Установка содержимого объекта.
 	 * Передает в объект содержимое соответствующего узла в исходном файле.
@@ -688,10 +686,9 @@ public:
 	/**
 	 * @brief Регистрация строителя.
 	 * Регистрирует явно заданного строителя.
-	 * @param className имя класса
 	 * @param builder строитель
 	 */
-	void registerBuilder(QString className, GSObjectBuilder* builder);
+	void registerBuilder(GSObjectBuilder* builder);
 	/**
 	 * @brief Регистрация строителя.
 	 * Регистрирует строителя, заданного при помощи описания класса.
@@ -722,5 +719,27 @@ private:
 
 	static GSObjectFactory* mFactory;
 };
+
+/**
+ * Макрос для объявления класса-строителя.
+ * Макрос позволяет определить класс-строитель для заданного GS-класса. Имя
+ * класса-строителя будет составлено из имени GS-класса с постфиксом Builder.
+ * @param className имя GS-класса в терминах C++
+ * @param strName имя GS-класса в терминах Squill
+ */
+#define DEFINE_GSCLASS(className, strName)				\
+class className;							\
+class className##Builder : public GSObjectBuilder {			\
+public:									\
+	className##Builder() {setName(strName);}			\
+	virtual GSObject *makeObject(GSObject *parent) const		\
+		{return new className(parent);}				\
+protected:								\
+	virtual GSObjectBuilder *clone() const {			\
+		GSObjectBuilder *res = new className##Builder();	\
+		res->setEnhancement(new SourceItem(enhancement()));	\
+		return res;						\
+	}								\
+};									\
 
 #endif // GSOBJECT_H

@@ -13,7 +13,6 @@ public:
 
 	Q_PROPERTY(QVariant text READ text WRITE setText NOTIFY textChanged)
 
-	virtual QString type() const;
 	virtual QWidget *widget() const;
 
 	QVariant text() const;
@@ -33,12 +32,6 @@ private:
 	QString m_text;
 };
 
-class GSLineEditBuilder : public GSObjectBuilder {
-public:
-	virtual GSObject *makeObject(GSObject *parent) const;
-
-protected:
-	virtual GSObjectBuilder *clone() const;
-};
+DEFINE_GSCLASS(GSLineEdit, "lineedit")
 
 #endif // GSLINEEDIT_H

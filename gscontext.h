@@ -12,10 +12,6 @@ public:
 	void bindQmlContext(QQmlContext* context);
 	void unbindQmlContext(QQmlContext* context);
 
-	// GSObject interface
-public:
-	virtual QString type() const;
-
 private slots:
 	void notifyQml(const QString& name);
 

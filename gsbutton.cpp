@@ -27,20 +27,3 @@ void GSButton::setCaption(QVariant caption)
 	mButton->setText(cap);
 	emit captionChanged(cap);
 }
-
-QString GSButton::type() const
-{
-	return "button";
-}
-
-GSObject *GSButtonBuilder::makeObject(GSObject *parent) const
-{
-	return new GSButton(parent);
-}
-
-GSObjectBuilder *GSButtonBuilder::clone() const
-{
-	GSObjectBuilder *res = new GSButtonBuilder();
-	res->setEnhancement(new SourceItem(enhancement()));
-	return res;
-}

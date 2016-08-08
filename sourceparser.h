@@ -35,16 +35,10 @@ struct SourceAttr {
 	QString name;
 	QString value;
 	AttrType type;
-
-	void parse(const QString &val);
 };
 
-struct SourceBind {
+struct SourceLink {
 	QString src, srcprop, dst, dstprop;
-};
-
-struct SourceConnect {
-	QString sender, signal, receiver, slot;
 };
 
 struct SourceItem {
@@ -53,10 +47,16 @@ struct SourceItem {
 	QString contents;
 	QMap<QString, SourceAttr> attributes;
 	QMap<QString, SourceItem*> children;
-	QList<SourceBind> bindings;
-	QList<SourceConnect> connects;
+	QList<SourceLink> bindings;
+	QList<SourceLink> connects;
 
 	void read(QXmlStreamReader& reader);
+
+	SourceLink readLink(QString sprRW, QString dprRW) const;
+	static SourceLink readLink(
+		QString src, QString srcprop, QString dst, QString dstprop);
+	static SourceLink readLink(SourceAttr attr);
+	static SourceAttr readAttr(QString n, QString val);
 
 	SourceItem() {}
 	SourceItem(SourceItem* other) {
@@ -69,12 +69,6 @@ struct SourceItem {
 		foreach(SourceItem* child, children)
 			delete child;
 	}
-};
-
-class SourceParser
-{
-public:
-	SourceParser();
 };
 
 #endif // SOURCEPARSER_H

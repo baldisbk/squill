@@ -11,8 +11,6 @@ class GSDatabase : public GSObject
 public:
 	GSDatabase(GSObject* parent);
 
-	virtual QString type() const;
-
 	Q_PROPERTY(QString dbName READ dbName WRITE setDbName NOTIFY dbNameChanged)
 	Q_PROPERTY(QString dbHost READ dbHost WRITE setDbHost NOTIFY dbHostChanged)
 	Q_PROPERTY(int dbPort READ dbPort WRITE setDbPort NOTIFY dbPortChanged)
@@ -55,13 +53,6 @@ private:
 	QString mDBType;
 };
 
-
-class GSDatabaseBuilder : public GSObjectBuilder {
-public:
-	virtual GSObject *makeObject(GSObject *parent) const;
-
-protected:
-	virtual GSObjectBuilder *clone() const;
-};
+DEFINE_GSCLASS(GSDatabase, "database")
 
 #endif // GSDATABASE_H

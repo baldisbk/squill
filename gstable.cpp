@@ -8,11 +8,6 @@ GSTable::GSTable(GSObject* parent): GSWidget(parent)
 	mTable->setModel(mModel = new GSTableModel(this));
 }
 
-QString GSTable::type() const
-{
-	return "table";
-}
-
 QWidget *GSTable::widget() const
 {
 	return mTable;
@@ -181,17 +176,4 @@ void GSTableModel::columnMoved(int newPos)
 		return;
 	if (newPos != oldPos)
 		moveColumn(column, newPos);
-}
-
-
-GSObject *GSTableBuilder::makeObject(GSObject *parent) const
-{
-	return new GSTable(parent);
-}
-
-GSObjectBuilder *GSTableBuilder::clone() const
-{
-	GSObjectBuilder *res = new GSTableBuilder();
-	res->setEnhancement(new SourceItem(enhancement()));
-	return res;
 }

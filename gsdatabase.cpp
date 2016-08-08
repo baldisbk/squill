@@ -4,11 +4,6 @@ GSDatabase::GSDatabase(GSObject *parent): GSObject(parent)
 {
 }
 
-QString GSDatabase::type() const
-{
-	return "database";
-}
-
 QString GSDatabase::dbName() const
 {
 	return mDBName;
@@ -103,17 +98,4 @@ void GSDatabase::setDbType(QString dbType)
 
 	mDBType = dbType;
 	emit dbTypeChanged(dbType);
-}
-
-
-GSObject *GSDatabaseBuilder::makeObject(GSObject *parent) const
-{
-	return new GSDatabase(parent);
-}
-
-GSObjectBuilder *GSDatabaseBuilder::clone() const
-{
-	GSObjectBuilder *res = new GSDatabaseBuilder();
-	res->setEnhancement(new SourceItem(enhancement()));
-	return res;
 }

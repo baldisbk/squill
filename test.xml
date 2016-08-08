@@ -16,18 +16,33 @@
 		select * from testtable
 	</query>
 	<query database="mysql" name="testquery2">
-		select key, value as val from testtable2
+		select tkey, value as val from testtable2
 	</query>
-	<class name="testbutton" parent="button" caption="@value" />
-	<testbutton x="1" y="1" name="button" caption="@value" />
-	<connect src="button" dst="testquery" signal="clicked" slot="exec" />
+	<!-- Embedded connection from implicit this -->
+	<connect signal="shown" dst="mysql" slot="open" />
+	<!-- Embedded connection from explicit this, to shortened -->
+	<connect src="this.shown" dst="sqlite.open" />
+
+	<!-- Class definition -->
+	<class name="testbutton" parent="button" caption="Button" />
+
+	<!-- Inline binding to self -->
+	<testbutton x="1" y="1" name="button" caption="@x" >
+		<!-- Embedded connection, from named this, shortened -->
+		<connect src="button.clicked" dst="testquery.exec" />
+	</testbutton>
+	<!-- Outside connection, full -->
 	<connect src="button" dst="testquery2" signal="clicked" slot="exec" />
-	<connect dst="mysql" signal="shown" slot="open" />
-	<connect dst="sqlite" signal="shown" slot="open" />
+
+	<!-- Inline binding to other, forward -->
 	<label x="1" y="2" name="label" label="@editor.text" />
 	<lineedit x="1" y="3" name="editor" />
+
 	<table x="1" y="4" yspan="3" name="table">
-		<column name="ckey" pos="0" header="id" value="@id" />
-		<column name="cvalue" pos="1" header="val" value="@value" />
+		<!-- Inline binding to implicit context -->
+		<column name="ckey" pos="0" header="id" value="@context.tkey" />
+		<column name="cvalue" pos="1" header="val" />
+		<!-- Outside binding to explicit context -->
+		<bind src=".val" dst="cvalue.value" />
 	</table>
 </main>

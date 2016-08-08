@@ -12,7 +12,6 @@ public:
 
 	Q_PROPERTY(QVariant caption READ caption WRITE setCaption NOTIFY captionChanged)
 
-	virtual QString type() const;
 	virtual QWidget *widget() const;
 
 	QVariant caption() const;
@@ -28,11 +27,6 @@ private:
 	QPushButton* mButton;
 };
 
-class GSButtonBuilder : public GSObjectBuilder {
-public:
-	virtual GSObject *makeObject(GSObject *parent) const;
+DEFINE_GSCLASS(GSButton, "button")
 
-protected:
-	virtual GSObjectBuilder *clone() const;
-};
 #endif // GSBUTTON_H

@@ -11,8 +11,6 @@ public:
 	Q_PROPERTY(QString query READ query WRITE setQuery NOTIFY queryChanged)
 	Q_PROPERTY(QString database READ database WRITE setDatabase NOTIFY databaseChanged)
 
-	virtual QString type() const;
-
 	QString query() const;
 	QString database() const;
 
@@ -34,13 +32,6 @@ private:
 	QString mDatabase;
 };
 
-
-class GSQueryBuilder : public GSObjectBuilder {
-public:
-	virtual GSObject *makeObject(GSObject *parent) const;
-
-protected:
-	virtual GSObjectBuilder *clone() const;
-};
+DEFINE_GSCLASS(GSQuery, "query")
 
 #endif // GSQUERY_H

@@ -24,8 +24,3 @@ void GSContext::notifyQml(const QString &name)
 	foreach(QQmlContext* context, mContexts)
 		context->setContextProperty(name, gsProperty(name));
 }
-
-QString GSContext::type() const
-{
-	return "context";
-}
