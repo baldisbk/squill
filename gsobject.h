@@ -524,10 +524,6 @@ protected:
 	 */
 	virtual GSContext *makeContext(GSContext *parent = NULL);
 
-protected:
-	QMap<QObject*, QMap<QString, QStringList> > mBinding;
-	QMap<QString, PropertyListener*> mListeners;
-
 private:
 	GSObject* mParent;
 	QQmlContext* mQmlContext;
@@ -536,6 +532,9 @@ private:
 	QMap<QString, GSObject*> mLocalContext;
 	QStringList mSiblings;
 	QStringList mChildren;
+
+	QMap<QObject*, QMap<QString, QStringList> > mBinding;
+	QMap<QString, PropertyListener*> mListeners;
 };
 
 
