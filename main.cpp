@@ -9,6 +9,7 @@
 #include "gsbutton.h"
 #include "gslabel.h"
 #include "gslineedit.h"
+#include "gscombobox.h"
 
 #include "gscolumn.h"
 #include "gstable.h"
@@ -37,6 +38,8 @@ int main(int argc, char *argv[])
 
 	fak->registerBuilder(new GSTableBuilder);
 	fak->registerBuilder(new GSColumnBuilder);
+
+	fak->registerBuilder(new GSComboBoxBuilder);
 
 	GSMainWindow mw;
 	mw.loadSource(&src);

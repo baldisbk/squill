@@ -45,4 +45,6 @@
 		<!-- Outside binding to explicit context -->
 		<bind src=".val" dst="cvalue.value" />
 	</table>
+	<combo x="1" y="7" name="cb" values="@.val" readonly="true" />
+	<label x="1" y="8" name="l2" label="@cb.current" />
 </main>
