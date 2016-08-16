@@ -151,7 +151,7 @@ SourceAttr SourceItem::readAttr(QString n, QString val)
 		attr.value = attr.value.right(attr.value.length()-1);
 
 	if (attr.type == attrScript) {
-		QRegExp re("(([a-zA-Z_][0-9a-zA-Z_]*\\.)*)([a-zA-Z_][0-9a-zA-Z_]*)");
+		QRegExp re("\\.?([a-zA-Z_][0-9a-zA-Z_]*\\.)*[a-zA-Z_][0-9a-zA-Z_]*");
 		if (re.exactMatch(attr.value))
 			attr.type = attrBind;
 		else
