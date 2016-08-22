@@ -6,6 +6,12 @@ GSTable::GSTable(GSObject* parent): GSWidget(parent)
 {
 	mTable = new QTableView;
 	mTable->setModel(mModel = new GSTableModel(this));
+	connect(mTable->selectionModel(),
+		SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+		this, SLOT(onCurrentChanged(QModelIndex)));
+	connect(mTable->selectionModel(),
+		SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+		this, SLOT(onSelectionChanged()));
 }
 
 QWidget *GSTable::widget() const
@@ -16,11 +22,92 @@ QWidget *GSTable::widget() const
 void GSTable::appendColumn(GSColumn *column)
 {
 	mModel->appendColumn(column);
+	emit columnAdded(column);
 }
 
 bool GSTable::moveColumn(GSColumn *column, int newPos)
 {
 	return mModel->moveColumn(column, newPos);
+}
+
+QVariant GSTable::selection() const
+{
+	QVariantList res;
+	QModelIndexList ilist = mTable->selectionModel()->selectedIndexes();
+	foreach(QModelIndex ind, ilist)
+		if (!res.contains(ind.row()))
+			res.append(ind.row());
+	std::sort(res.begin(), res.end());
+	return res;
+}
+
+QVariant GSTable::currentRow() const
+{
+	return mTable->currentIndex().row();
+}
+
+int GSTable::columnCount() const
+{
+	return mModel->columnCount();
+}
+
+GSColumn *GSTable::column(int col) const
+{
+	return mModel->column(col);
+}
+
+void GSTable::setSelection(QVariant currentRows)
+{
+	QList<int> ilist;
+	if (currentRows.type() == QVariant::List) {
+		foreach(QVariant v, currentRows.toList())
+			if (v.canConvert(QVariant::Int))
+				ilist.append(v.toInt());
+	} else if (currentRows.canConvert(QVariant::Int))
+		ilist.append(currentRows.toInt());
+	else
+		return;
+	bool hasChanged = false;
+	QModelIndexList mlist = mTable->selectionModel()->selectedIndexes();
+	foreach(QModelIndex index, mlist)
+		if (!ilist.contains(index.row())) {
+			mTable->selectionModel()->select(
+					index, QItemSelectionModel::Deselect);
+			hasChanged = true;
+		}
+	foreach(int ind, ilist) {
+		QModelIndex index = mModel->index(ind, 0);
+		if (!mTable->selectionModel()->isSelected(index)) {
+			mTable->selectionModel()->select(
+					index, QItemSelectionModel::Select);
+			hasChanged = true;
+		}
+	}
+
+	if (hasChanged)
+		emit selectionChanged(selection());
+}
+
+void GSTable::setCurrentRow(QVariant currentRow)
+{
+	QModelIndex curr = mTable->currentIndex();
+	int cr = gsToScalar(currentRow).toInt();
+	if (curr.isValid() && curr.row() == cr)
+		return;
+	int column = curr.isValid() ? curr.column() : 0;
+	mTable->setCurrentIndex(mModel->index(cr, column));
+	emit currentRowChanged(cr);
+}
+
+void GSTable::onCurrentChanged(const QModelIndex &current)
+{
+	if (current.isValid())
+		emit currentRowChanged(current.row());
+}
+
+void GSTable::onSelectionChanged()
+{
+	emit selectionChanged(selection());
 }
 
 
@@ -97,7 +184,7 @@ void GSTableModel::appendColumn(GSColumn *column)
 	mColumns.insert(ind, column);
 	mValues.insert(ind, column->value().toList());
 	endInsertColumns();
-	int newSize = column->value().toList().size();
+	int newSize = column->size();
 	if (newSize > mRowNumber) {
 		beginResetModel();
 		mRowNumber = newSize;
@@ -117,6 +204,13 @@ bool GSTableModel::moveColumn(GSColumn *column, int newPos)
 	if (oldPos < 0)
 		return false;
 	return true;
+}
+
+GSColumn *GSTableModel::column(int col) const
+{
+	if (col >= 0 && col < columnCount())
+		return mColumns.at(col);
+	return NULL;
 }
 
 void GSTableModel::updateColumn(int colPos, int start, int fin)

@@ -18,8 +18,10 @@ public:
 	Q_PROPERTY(QString header READ header WRITE setHeader NOTIFY headerChanged)
 
 	QVariant value() const;
+	QVariant value(int pos) const;
 	int pos() const;
 	QString header() const;
+	int size() const;
 
 public slots:
 	void setValue(QVariant value);

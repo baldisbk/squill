@@ -7,7 +7,8 @@ GSColumn::GSColumn(GSObject *parent) : GSObject(parent), mHost(NULL)
 
 bool GSColumn::loadSource(SourceItem *item)
 {
-	GSObject::loadSource(item);
+	if (!GSObject::loadSource(item))
+		return false;
 	mHost = qobject_cast<GSTable*>(gsParent());
 	if (mHost) mHost->appendColumn(this);
 	return true;
@@ -18,6 +19,14 @@ QVariant GSColumn::value() const
 	return mValue;
 }
 
+QVariant GSColumn::value(int pos) const
+{
+	if (pos >= 0 && pos < mValue.size())
+		return mValue[pos];
+	else
+		return QVariant();
+}
+
 int GSColumn::pos() const
 {
 	return mPos;
@@ -26,6 +35,11 @@ int GSColumn::pos() const
 QString GSColumn::header() const
 {
 	return mHeader;
+}
+
+int GSColumn::size() const
+{
+	return mValue.size();
 }
 
 void GSColumn::setValue(QVariant value)

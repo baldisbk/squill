@@ -13,6 +13,7 @@
 
 #include "gscolumn.h"
 #include "gstable.h"
+#include "gsdelegate.h"
 
 int main(int argc, char *argv[])
 {
@@ -29,17 +30,20 @@ int main(int argc, char *argv[])
 
 	GSObjectFactory* fak = GSObjectFactory::factory();
 
+	// base
 	fak->registerBuilder(new GSDatabaseBuilder);
 	fak->registerBuilder(new GSQueryBuilder);
 
+	//widgets
 	fak->registerBuilder(new GSButtonBuilder);
 	fak->registerBuilder(new GSLabelBuilder);
 	fak->registerBuilder(new GSLineEditBuilder);
+	fak->registerBuilder(new GSComboBoxBuilder);
 
+	//table
 	fak->registerBuilder(new GSTableBuilder);
 	fak->registerBuilder(new GSColumnBuilder);
-
-	fak->registerBuilder(new GSComboBoxBuilder);
+	fak->registerBuilder(new GSDelegateBuilder);
 
 	GSMainWindow mw;
 	mw.loadSource(&src);
