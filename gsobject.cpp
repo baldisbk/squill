@@ -62,8 +62,8 @@ bool GSObject::loadSource(SourceItem *item)
 		if (!obj)
 			// TODO report problem
 			continue;
-		setLocalObject(child->name, obj);
 		mChildren.append(child->name);
+		setLocalObject(child->name, obj);
 		SourceItem* newSrc = GSObjectFactory::factory()->makeSource(child);
 		item->children[child->name] = newSrc;
 		delete child;
@@ -100,14 +100,10 @@ void GSObject::setLocalObject(const QString &name, GSObject *obj)
 	mLocalContext.insert(name, obj);
 	if (name.isEmpty())
 		return;
-	// TODO check if it can be replaced with
-	// setGSProperty
-	// (if setContextProperty param is replaceable with QVariant)
-	object()->setProperty(
-		name.toLatin1(), QVariant::fromValue(obj->object()));
-	if (qmlContext())
+	if (mChildren.contains(name))
+		setGSProperty(name, QVariant::fromValue(obj->object()));
+	else if (qmlContext())
 		qmlContext()->setContextProperty(name, obj->object());
-	emit gsPropertyChanged(name);
 }
 
 QStringList GSObject::localObjects() const
