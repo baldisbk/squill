@@ -313,7 +313,7 @@ public:
 	 * @param name имя свойства
 	 * @param value новое значение свойства
 	 */
-	void setGSProperty(const QString& name, const QVariant &value);
+	virtual void setGSProperty(const QString& name, const QVariant &value);
 
 	/**
 	 * @brief Список имен всех свойств объекта.

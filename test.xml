@@ -27,12 +27,13 @@
 	<class name="testbutton" parent="button" caption="Button" />
 
 	<!-- Inline binding to self -->
-	<testbutton x="1" y="1" name="button" caption="@x" >
+	<testbutton x="1" y="1" name="button" caption="@.value" >
 		<!-- Embedded connection, from named this, shortened -->
-		<connect src="button.clicked" dst="testquery.exec" />
+		<connect src="this.clicked" dst="testquery.exec" />
 	</testbutton>
 	<!-- Outside connection, full -->
 	<connect src="button" dst="testquery2" signal="clicked" slot="exec" />
+	<connect src="qmltest" dst="qmltest" signal="clicked" slot="recolor" />
 
 	<!-- Inline binding to other, forward -->
 	<label x="1" y="2" name="label" label="@editor.text" />
@@ -41,13 +42,46 @@
 	<table x="1" y="4" yspan="3" name="table">
 		<!-- Inline binding to implicit context -->
 		<column name="ckey" pos="0" header="@de.row" value="@context.tkey" />
-		<column name="cvalue" pos="1" header="val" />
+		<column name="cvalue" pos="1" header="@value" />
 		<!-- Outside binding to explicit context -->
 		<bind src=".val" dst="cvalue.value" />
 		<delegate name="de"/>
 		<bind src="de.ckey" dst="deedit.text" />
 	</table>
-	<combo x="1" y="7" name="cb" values="@.val" readonly="true" />
-	<label x="1" y="8" name="l2" label="@cb.current" />
-	<lineedit x="1" y="9" name="deedit" />
+	<combo x="2" y="1" name="cb" values="@.val" readonly="true" />
+	<label x="2" y="2" name="l2" label="@cb.current" />
+	<lineedit x="2" y="3" name="deedit" />
+	<qml x="2" y="4" name="qmltest">
+		import QtQuick 2.0
+		Item {
+			id: host
+			property bool colState: true
+			property string name: label.label
+			signal clicked()
+			anchors.fill: parent
+			function recolor() {
+				if (colState)
+					rect.color = "red"
+				else
+					rect.color = "white"
+				colState = !colState
+			}
+			Rectangle {
+				id: rect
+				anchors.fill: parent
+				Text {
+					anchors.fill: parent
+					id: txt
+					text: host.name
+					horizontalAlignment: Text.AlignHCenter
+					verticalAlignment: Text.AlignVCenter
+				}
+				MouseArea {
+					id: mouseArea
+					anchors.fill: parent
+					onClicked: host.clicked()
+				}
+			}
+		}
+	</qml>
 </main>

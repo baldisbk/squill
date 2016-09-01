@@ -16,7 +16,8 @@ SOURCES += main.cpp \
     gstable.cpp \
     gscolumn.cpp \
     gscombobox.cpp \
-    gsdelegate.cpp
+    gsdelegate.cpp \
+    gsqmlitem.cpp
 
 RESOURCES += qml.qrc
 
@@ -40,7 +41,8 @@ HEADERS += \
     gstable.h \
     gscolumn.h \
     gscombobox.h \
-    gsdelegate.h
+    gsdelegate.h \
+    gsqmlitem.h
 
 DISTFILES += \
     test.xml

@@ -15,6 +15,8 @@
 #include "gstable.h"
 #include "gsdelegate.h"
 
+#include "gsqmlitem.h"
+
 int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
@@ -44,6 +46,9 @@ int main(int argc, char *argv[])
 	fak->registerBuilder(new GSTableBuilder);
 	fak->registerBuilder(new GSColumnBuilder);
 	fak->registerBuilder(new GSDelegateBuilder);
+
+	//QML
+	fak->registerBuilder(new GSQmlItemBuilder);
 
 	GSMainWindow mw;
 	mw.loadSource(&src);
