@@ -25,6 +25,9 @@ bool GSObject::loadSource(SourceItem *item)
 		// TODO report error
 		return false;
 
+	if (!setContents(item->contents))
+	{}// TODO report problem
+
 	setLocalObject(THIS_RESWORD, this);
 	if (contextObject()) {
 		setLocalObject(QString(), contextObject());
@@ -41,8 +44,6 @@ bool GSObject::loadSource(SourceItem *item)
 	foreach(SourceAttr attr, item->attributes)
 		if (attr.type == attrValue)
 			setGSProperty(attr.name, attr.value);
-	if (!setContents(item->contents))
-	{}// TODO report problem
 
 	QList<SourceItem*> children = item->children.values();
 
@@ -284,7 +285,8 @@ QString GSObject::name() const
 void GSObject::setName(const QString &name)
 {
 	mName = name;
-	object()->setObjectName(name);
+	if (object())
+		object()->setObjectName(name);
 }
 
 bool GSObject::setContents(const QString& /*contents*/)
