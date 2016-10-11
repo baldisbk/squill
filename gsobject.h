@@ -11,6 +11,19 @@
 
 class GSObject;
 
+class OwnNotifier : public QObject {
+	Q_OBJECT
+public:
+	OwnNotifier(QString name, GSObject* parent);
+public slots:
+	void notify();
+signals:
+	void notified(QString name, QVariant value);
+private:
+	QString mName;
+	GSObject* mParent;
+};
+
 /**
  * @brief Вспомогательный класс для привязки свойств.
  *
@@ -234,6 +247,8 @@ public:
 	 */
 	GSObject(GSObject* parent = NULL);
 
+	virtual void initProperties();
+
 	/**
 	 * @brief Функция заполнения объекта.
 	 * Заполняет содержимое объекта на основе описания из исходного файла.
@@ -447,7 +462,7 @@ signals:
 	 * центральный объект).
 	 * @param name имя свойства
 	 */
-	void gsPropertyChanged(const QString& name);
+	void gsPropertyChanged(const QString& name, const QVariant& value);
 
 protected:
 	/**
@@ -524,6 +539,9 @@ protected:
 	 */
 	virtual GSContext *makeContext(GSContext *parent = NULL);
 
+protected slots:
+	void processPropertyChange(const QString &name, const QVariant &value);
+
 private:
 	GSObject* mParent;
 	QQmlContext* mQmlContext;
@@ -535,6 +553,7 @@ private:
 
 	QMap<QObject*, QMap<QString, QStringList> > mBinding;
 	QMap<QString, PropertyListener*> mListeners;
+	QMap<QString, OwnNotifier*> mOwnNotifiers;
 };
 
 

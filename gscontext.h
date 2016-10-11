@@ -13,7 +13,7 @@ public:
 	void unbindQmlContext(QQmlContext* context);
 
 private slots:
-	void notifyQml(const QString& name);
+	void notifyQml(const QString& name, const QVariant &value);
 
 private:
 	QList<QQmlContext*> mContexts;

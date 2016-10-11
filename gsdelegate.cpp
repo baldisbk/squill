@@ -46,7 +46,7 @@ void GSDelegate::onColumnAdded(GSColumn *column)
 		return;
 	mColumns[column] = column->name();
 	setGSProperty(column->name(), column->value(mRow));
-	connect(column, SIGNAL(gsPropertyChanged(QString)),
+	connect(column, SIGNAL(gsPropertyChanged(QString, QVariant)),
 		this, SLOT(onColumnChanged(QString)));
 }
 

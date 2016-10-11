@@ -14,6 +14,26 @@ GSObject::GSObject(GSObject *parent):
 {
 }
 
+void GSObject::initProperties()
+{
+	if (!object())
+		return;
+	const QMetaObject* metaObject = object()->metaObject();
+	for (int i = 0; i < metaObject->propertyCount(); ++i) {
+		QMetaProperty prop = metaObject->property(i);
+		if (prop.hasNotifySignal()) {
+			QString pName = QString::fromLatin1(prop.name());
+			QString sigName = signalStr(QString::fromLatin1(
+				prop.notifySignal().methodSignature()));
+			OwnNotifier *oNot = new OwnNotifier(pName, this);
+			connect(object(), sigName.toLatin1().data(),
+				oNot, SLOT(notify()));
+			connect(oNot, SIGNAL(notified(QString, QVariant)),
+				this, SLOT(processPropertyChange(QString,QVariant)));
+		}
+	}
+}
+
 bool GSObject::loadSource(SourceItem *item)
 {
 	if (!item)
@@ -24,9 +44,6 @@ bool GSObject::loadSource(SourceItem *item)
 	if (!mContext)
 		// TODO report error
 		return false;
-
-	if (!setContents(item->contents))
-	{}// TODO report problem
 
 	setLocalObject(THIS_RESWORD, this);
 	if (contextObject()) {
@@ -39,11 +56,8 @@ bool GSObject::loadSource(SourceItem *item)
 		foreach(QString sibling, siblings)
 			setLocalObject(sibling, mParent->localObject(sibling));
 	} else
+		// because this object is also included in siblings
 		setLocalObject(name(), this);
-
-	foreach(SourceAttr attr, item->attributes)
-		if (attr.type == attrValue)
-			setGSProperty(attr.name, attr.value);
 
 	QList<SourceItem*> children = item->children.values();
 
@@ -68,6 +82,16 @@ bool GSObject::loadSource(SourceItem *item)
 		item->children[child->name] = newSrc;
 		delete child;
 	}
+
+	if (!setContents(item->contents))
+	{}// TODO report problem
+
+	initProperties();
+
+	foreach(SourceAttr attr, item->attributes)
+		if (attr.type == attrValue)
+			setGSProperty(attr.name, attr.value);
+
 	// now we have all children, parent and siblings
 	// load children (they will connect and bind)
 	foreach(SourceItem* child, item->children) {
@@ -131,9 +155,6 @@ bool GSObject::hasGSProperty(const QString &name) const
 void GSObject::setGSProperty(const QString &name, const QVariant &value)
 {
 	object()->setProperty(name.toLatin1(), value);
-	if (qmlContext())
-		qmlContext()->setContextProperty(name, value);
-	emit gsPropertyChanged(name);
 }
 
 QStringList GSObject::gsProperties() const
@@ -235,38 +256,36 @@ PropertyListener* GSObject::bindProperty(GSObject *obj, QString src, QString dst
 	int sindex = snd->metaObject()->indexOfProperty(src.toLatin1());
 	QMetaProperty sprop = snd->metaObject()->property(sindex);
 	QString sigName;
-	if (sprop.isValid() && sprop.hasNotifySignal())
+	removeBinding(dst);
+	PropertyListener* l = mListeners[dst] = new PropertyListener(obj, src, this, dst);
+	if (sprop.isValid() && sprop.hasNotifySignal()) {
 		sigName = signalStr(QString::fromLatin1(
 			sprop.notifySignal().methodSignature()));
-	else {
-		removeBinding(dst);
+		connect(snd, sigName.toLatin1().data(), l, SLOT(notify()));
+	} else {
 		if (!mBinding.contains(snd))
 			snd->installEventFilter(this);
 		mBinding[snd][src].append(dst);
-		mListeners[dst] = new PropertyListener(obj, src, this, dst);
-		mListeners[dst]->setDynamic(true);
+		l->setDynamic(true);
 		// do NOT connect
 		// fcuk property exist check
-		return mListeners[dst];
 	}
-	removeBinding(dst);
-	PropertyListener* l = new PropertyListener(obj, src, this, dst);
-	connect(snd, sigName.toLatin1().data(), l, SLOT(notify()));
-	mListeners[dst] = l;
 	return l;
 }
 
 bool GSObject::eventFilter(QObject *obj, QEvent *e)
 {
-	if (e->type()==QEvent::DynamicPropertyChange && mBinding.contains(obj)) {
+	if (e->type()==QEvent::DynamicPropertyChange) {
 		QDynamicPropertyChangeEvent *propEvent =
 			static_cast<QDynamicPropertyChangeEvent*>(e);
 		if (propEvent) {
 			QString propName = QString::fromLatin1(propEvent->propertyName());
-			if (mBinding[obj].contains(propName)) {
+			if (mBinding.contains(obj) && mBinding[obj].contains(propName)) {
 				QStringList list = mBinding[obj][propName];
 				foreach(QString dst, list)
 					mListeners[dst]->notify();
+			} else if (obj == object()) {
+				processPropertyChange(propName, gsProperty(propName));
 			}
 		}
 	}
@@ -341,6 +360,14 @@ QQmlContext *GSObject::makeRootQmlContext()
 GSContext *GSObject::makeContext(GSContext *parent)
 {
 	return parent;
+}
+
+void GSObject::processPropertyChange(const QString &name, const QVariant &value)
+{
+	if (qmlContext() && gsProperty(name) != value) {
+		qmlContext()->setContextProperty(name, value);
+	}
+	emit gsPropertyChanged(name, value);
 }
 
 
@@ -525,4 +552,15 @@ QVariant GSObject::gsToScalar(const QVariant &var)
 			return l.first();
 	}
 	return var;
+}
+
+
+OwnNotifier::OwnNotifier(QString name, GSObject *parent):
+	QObject(parent), mName(name), mParent(parent)
+{
+}
+
+void OwnNotifier::notify()
+{
+	emit notified(mName, mParent->gsProperty(mName));
 }
