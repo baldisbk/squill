@@ -17,7 +17,10 @@ SOURCES += main.cpp \
     gscolumn.cpp \
     gscombobox.cpp \
     gsdelegate.cpp \
-    gsqmlitem.cpp
+    gsqmlitem.cpp \
+    gsqmlwidget.cpp \
+    qmlcontainer.cpp \
+    gsqmlwindow.cpp
 
 RESOURCES += qml.qrc
 
@@ -42,7 +45,10 @@ HEADERS += \
     gscolumn.h \
     gscombobox.h \
     gsdelegate.h \
-    gsqmlitem.h
+    gsqmlitem.h \
+    gsqmlwidget.h \
+    qmlcontainer.h \
+    gsqmlwindow.h
 
 DISTFILES += \
     test.xml

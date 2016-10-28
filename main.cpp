@@ -16,6 +16,8 @@
 #include "gsdelegate.h"
 
 #include "gsqmlitem.h"
+#include "gsqmlwidget.h"
+#include "gsqmlwindow.h"
 
 int main(int argc, char *argv[])
 {
@@ -49,6 +51,8 @@ int main(int argc, char *argv[])
 
 	//QML
 	fak->registerBuilder(new GSQmlItemBuilder);
+	fak->registerBuilder(new GSQmlWidgetBuilder);
+	fak->registerBuilder(new GSQmlWindowBuilder);
 
 	GSMainWindow mw;
 	mw.loadSource(&src);

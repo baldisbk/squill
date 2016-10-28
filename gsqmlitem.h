@@ -4,25 +4,23 @@
 #include "gswidget.h"
 
 #include <QQuickItem>
-#include <QQuickWindow>
 
-class GSQmlItem : public GSWidget
+class GSQmlItem : public GSObject
 {
 	Q_OBJECT
 public:
 	GSQmlItem(GSObject* parent = NULL);
-	virtual QWidget* widget() const;
 	virtual QObject* object();
 	virtual QObject* object() const;
-	virtual void setGSProperty(const QString &name, const QVariant &value);
+	virtual bool loadSource(SourceItem *item);
+
+	QQuickItem *item() const;
 
 protected:
 	virtual bool setContents(const QString &contents);
 
 private:
 	QQuickItem* mItem;
-	QQuickWindow* mQml;
-	QWidget* mWidget;
 };
 
 DEFINE_GSCLASS(GSQmlItem, "qml")
