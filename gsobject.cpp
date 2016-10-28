@@ -41,9 +41,11 @@ bool GSObject::loadSource(SourceItem *item)
 	setName(item->name);
 
 	mContext = makeContext(mParent?mParent->contextObject():NULL);
-	if (!mContext)
-		// TODO report error
+	if (!mContext) {
+		qDebug() << QString("Object %1: no GSContext created").
+			    arg(name());
 		return false;
+	}
 
 	setLocalObject(THIS_RESWORD, this);
 	if (contextObject()) {
@@ -73,9 +75,11 @@ bool GSObject::loadSource(SourceItem *item)
 		if (child->type == CLASS_RESWORD)
 			continue;
 		GSObject* obj = GSObjectFactory::factory()->makeObject(child, this);
-		if (!obj)
-			// TODO report problem
+		if (!obj) {
+			qDebug() << QString("Object %1: failed to create child %2 (%3)").
+				    arg(name()).arg(child->name).arg(child->type);
 			continue;
+		}
 		mChildren.append(child->name);
 		setLocalObject(child->name, obj);
 		SourceItem* newSrc = GSObjectFactory::factory()->makeSource(child);
@@ -83,8 +87,9 @@ bool GSObject::loadSource(SourceItem *item)
 		delete child;
 	}
 
-	if (!setContents(item->contents))
-	{}// TODO report problem
+	if (!setContents(item->contents)) {
+		qDebug() << QString("Object %1: problem in contents").arg(name());
+	}
 
 	initProperties();
 
@@ -108,11 +113,11 @@ bool GSObject::loadSource(SourceItem *item)
 
 	// connect and bind this
 	foreach(SourceLink connect, item->connects)
-		if (!makeConnection(connect))
-		{}// TODO report problem
+		// problems are reported in makeConnection
+		makeConnection(connect);
 	foreach(SourceLink binding, item->bindings)
-		if (!makeBinding(binding))
-		{}//TODO report problem
+		// problems are reported in makeBinding
+		makeBinding(binding);
 	// TODO embedded scripts for properties
 	return true;
 }
@@ -306,34 +311,74 @@ void GSObject::setName(const QString &name)
 
 bool GSObject::setContents(const QString& /*contents*/)
 {
-	return false;
+	return true;
 }
 
 bool GSObject::makeConnection(SourceLink connection)
 {
 	GSObject* gsSnd = localObject(connection.src);
 	GSObject* gsRcv = localObject(connection.dst);
-	if (!gsSnd || !gsRcv)
+	if (!gsSnd) {
+		qDebug() << QString("Object %1: no sender object at connection: %2").
+			    arg(name()).arg(connection.src);
 		return false;
+	}
+	if (!gsRcv) {
+		qDebug() << QString("Object %1: no destination object at connection: %2").
+			    arg(name()).arg(connection.src);
+		return false;
+	}
 	QObject* snd = gsSnd->object();
 	QObject* rcv = gsRcv->object();
-	if (snd && rcv)
-		// TODO report problem
-		return connect(
-			snd, signalStr(connection.srcprop).toLatin1(),
-			rcv, slotStr(connection.dstprop).toLatin1());
-	else
-		return false; // TODO report problem
+	if (!snd) {
+		qDebug() << QString("Object %1: null sender object at connection: %2").
+			    arg(name()).arg(connection.src);
+		return false;
+	}
+	if (!rcv) {
+		qDebug() << QString("Object %1: null destination object at connection: %2").
+			    arg(name()).arg(connection.dst);
+		return false;
+	}
+	if (!connect(
+		snd, signalStr(connection.srcprop).toLatin1(),
+		rcv, slotStr(connection.dstprop).toLatin1()))
+	{
+		qDebug() << QString("Object %1: problem in connection %2.%3 -> %4.%5").
+			    arg(name()).
+			    arg(connection.src).
+			    arg(connection.srcprop).
+			    arg(connection.dst).
+			    arg(connection.dstprop);
+		return false;
+	}
+	return true;
 }
 
 bool GSObject::makeBinding(SourceLink binding)
 {
 	GSObject* dst = localObject(binding.dst);
 	GSObject* src = localObject(binding.src);
-	if (!dst || !src)
-		return false; // TODO report problem
-	// TODO report problem
-	return dst->bindProperty(src, binding.srcprop, binding.dstprop);
+	if (!dst) {
+		qDebug() << QString("Object %1: no destination GS object at binding: %2").
+			    arg(name()).arg(binding.dst);
+		return false;
+	}
+	if (!src) {
+		qDebug() << QString("Object %1: no source GS object at binding: %2").
+			    arg(name()).arg(binding.src);
+		return false;
+	}
+	if (!dst->bindProperty(src, binding.srcprop, binding.dstprop)) {
+		qDebug() << QString("Object %1: problem in connection %4.%5 = %2.%3").
+			    arg(name()).
+			    arg(binding.src).
+			    arg(binding.srcprop).
+			    arg(binding.dst).
+			    arg(binding.dstprop);
+		return false;
+	}
+	return true;
 }
 
 QString GSObject::signalStr(const QString &signal)

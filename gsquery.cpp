@@ -34,8 +34,12 @@ void GSQuery::exec()
 	if (!db.isValid() || !db.isOpen())
 		return;
 	QSqlQuery q(db);
-	q.exec(query());
-	// TODO report error
+	if (!q.exec(query())) {
+		qDebug() << QString("Query %1 caused error: %2 (%3)").
+			    arg(name()).
+			    arg(q.lastError().databaseText()).
+			    arg(q.lastError().driverText());
+	}
 	QSqlRecord rec = q.record();
 	QStringList names;
 	QList<QVariantList> res;
