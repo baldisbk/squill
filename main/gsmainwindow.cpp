@@ -25,12 +25,6 @@ bool GSMainWindow::addWidget(QWidget *widget, int x, int y, int xspan, int yspan
 	return true;
 }
 
-void GSMainWindow::run()
-{
-	mMW->show();
-	emit shown();
-}
-
 QQmlContext *GSMainWindow::makeRootQmlContext()
 {
 	return mEngine.rootContext();
@@ -39,4 +33,13 @@ QQmlContext *GSMainWindow::makeRootQmlContext()
 GSContext *GSMainWindow::makeContext(GSContext *parent)
 {
 	return new GSContext(parent);
+}
+
+bool GSMainWindow::loadSource(SourceItem *item)
+{
+	if (!GSWidget::loadSource(item))
+		return false;
+	mMW->show();
+	emit shown();
+	return true;
 }

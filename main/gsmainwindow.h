@@ -15,9 +15,7 @@ public:
 
 	virtual QWidget *widget() const;
 	virtual bool addWidget(QWidget *widget, int x, int y, int xspan, int yspan);
-
-public slots:
-	void run();
+	virtual bool loadSource(SourceItem *item);
 
 signals:
 	void shown();
@@ -31,5 +29,7 @@ private:
 	QGridLayout* mGrid;
 	QQmlEngine mEngine;
 };
+
+DEFINE_GSCLASS(GSMainWindow, "main")
 
 #endif // GSMAINWINDOW_H

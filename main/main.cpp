@@ -44,6 +44,8 @@ int main(int argc, char *argv[])
 				arg(fileName).arg(pluginLoader.errorString());
 	}
 
+	fak->registerBuilder(new GSMainWindowBuilder);
+
 	// base
 	fak->registerBuilder(new GSDatabaseBuilder);
 	fak->registerBuilder(new GSQueryBuilder);
@@ -53,9 +55,18 @@ int main(int argc, char *argv[])
 	fak->registerBuilder(new GSQmlWidgetBuilder);
 	fak->registerBuilder(new GSQmlWindowBuilder);
 
-	GSMainWindow mw;
-	mw.loadSource(&src);
-	mw.run();
+	GSObject* obj = GSObjectFactory::factory()->makeObject(&src);
+	if (!obj) {
+		qDebug() << QString("Failed to create root %1 (%2)").
+			    arg(src.name).arg(src.type);
+		return -1;
+	}
+	SourceItem* newSrc = GSObjectFactory::factory()->makeSource(&src);
+	obj->loadSource(newSrc);
 
-	return app.exec();
+	int res = app.exec();
+
+	delete obj;
+
+	return res;
 }

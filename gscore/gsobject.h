@@ -594,7 +594,7 @@ public:
 	 * @param parent родительский объект
 	 * @return новый объект
 	 */
-	virtual GSObject* makeObject(GSObject *parent) const = 0;
+	virtual GSObject* makeObject(GSObject *parent = NULL) const = 0;
 
 	/**
 	 * @brief Создание расширенного описания объекта.
@@ -692,7 +692,7 @@ public:
 	 * @param parent родительский объект
 	 * @return созданный объект
 	 */
-	GSObject* makeObject(SourceItem* item, GSObject *parent);
+	GSObject* makeObject(SourceItem* item, GSObject *parent = NULL);
 	/**
 	 * @brief Создание описания нового объекта.
 	 * Создает описание нового объекта на основе переданного описания из
@@ -750,7 +750,7 @@ class className;							\
 class className##Builder : public GSObjectBuilder {			\
 public:									\
 	className##Builder() {setName(strName);}			\
-	virtual GSObject *makeObject(GSObject *parent) const		\
+	virtual GSObject *makeObject(GSObject *parent = NULL) const	\
 		{return new className(parent);}				\
 protected:								\
 	virtual GSObjectBuilder *clone() const {			\
