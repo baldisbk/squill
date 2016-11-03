@@ -4,6 +4,8 @@
 #include <QXmlStreamReader>
 #include <QMap>
 
+#include "gscore.h"
+
 // node reswords
 #define CLASS_RESWORD "class"
 #define SCRIPT_RESWORD "script"
@@ -40,7 +42,7 @@ enum AttrType {
 /**
  * @brief Структура описания свойства.
  */
-struct SourceAttr {
+struct GSCORESHARED_EXPORT SourceAttr {
 	QString name;	//!< имя свойства
 	QString value;	//!< значение или привязка
 	AttrType type;	//!< тип значения
@@ -49,7 +51,7 @@ struct SourceAttr {
 /**
  * @brief Структура описания привязки или соединения.
  */
-struct SourceLink {
+struct GSCORESHARED_EXPORT SourceLink {
 	QString src;		//!< имя объекта-источника
 	QString srcprop;	//!< имя свойства-источника или сигнала
 	QString dst;		//!< имя объекта-получателя
@@ -120,7 +122,7 @@ struct SourceLink {
  * Структура не выполняет функции семантического анализатора - существование
  * свойств, сигналов, слотов, строителей классов и т.п. не проверяется.
  */
-struct SourceItem {
+struct GSCORESHARED_EXPORT SourceItem {
 	QString type;		//!< тип объекта
 	QString name;		//!< имя объекта
 	QString contents;	//!< содержимое (текст) объекта

@@ -2,13 +2,13 @@
 #define GSOBJECT_H
 
 #include <QObject>
-#include <QQmlEngine>
 #include <QStack>
 
 #include "sourceparser.h"
 
 #include <QDebug>
 
+class QQmlContext;
 class GSObject;
 
 class OwnNotifier : public QObject {
@@ -39,7 +39,7 @@ private:
  * генерируется сигнал notified(). Данный сигнал генерируется вне зависимости
  * от того, изменилось ли значение свойства.
  */
-class PropertyListener : public QObject {
+class GSCORESHARED_EXPORT PropertyListener : public QObject {
 	Q_OBJECT
 public:
 	/**
@@ -583,7 +583,7 @@ private:
  *	4. Заполнить объект при помощи GSObject::loadSource и созданного
  *	описания.
  */
-class GSObjectBuilder {
+class GSCORESHARED_EXPORT GSObjectBuilder {
 public:
 	GSObjectBuilder();
 	virtual ~GSObjectBuilder();
@@ -681,7 +681,7 @@ private:
  * объекты при помощи функции makeObject(), так и определения объектов для
  * передачи в GSObject::loadSource при помощи функции makeSource.
  */
-class GSObjectFactory : private QMap<QString, QStack<GSObjectBuilder*> > {
+class GSCORESHARED_EXPORT GSObjectFactory : private QMap<QString, QStack<GSObjectBuilder*> > {
 public:
 	/**
 	 * @brief Создание объекта.
@@ -759,5 +759,12 @@ protected:								\
 		return res;						\
 	}								\
 };									\
+
+class SquillPluginInterface {
+public:
+	virtual ~SquillPluginInterface() {}
+	virtual QList<GSObjectBuilder*> builders() const = 0;
+};
+Q_DECLARE_INTERFACE(SquillPluginInterface, "SquillPluginInterface")
 
 #endif // GSOBJECT_H

@@ -1,19 +1,12 @@
 #include <QApplication>
 #include <QFile>
+#include <QDir>
+#include <QPluginLoader>
 
 #include "gsmainwindow.h"
 
 #include "gsdatabase.h"
 #include "gsquery.h"
-
-#include "gsbutton.h"
-#include "gslabel.h"
-#include "gslineedit.h"
-#include "gscombobox.h"
-
-#include "gscolumn.h"
-#include "gstable.h"
-#include "gsdelegate.h"
 
 #include "gsqmlitem.h"
 #include "gsqmlwidget.h"
@@ -34,20 +27,26 @@ int main(int argc, char *argv[])
 
 	GSObjectFactory* fak = GSObjectFactory::factory();
 
+	QDir pluginsDir(qApp->applicationDirPath());
+	pluginsDir.cd("plugins");
+	foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+		QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+		QObject *plugin = pluginLoader.instance();
+		SquillPluginInterface *splugin =
+			qobject_cast<SquillPluginInterface*>(plugin);
+
+		if (splugin) {
+			QList<GSObjectBuilder*> builders = splugin->builders();
+			foreach(GSObjectBuilder* builder, builders)
+				fak->registerBuilder(builder);
+		} else
+			qDebug() << QString("Error loading plugin %1: %2").
+				arg(fileName).arg(pluginLoader.errorString());
+	}
+
 	// base
 	fak->registerBuilder(new GSDatabaseBuilder);
 	fak->registerBuilder(new GSQueryBuilder);
-
-	//widgets
-	fak->registerBuilder(new GSButtonBuilder);
-	fak->registerBuilder(new GSLabelBuilder);
-	fak->registerBuilder(new GSLineEditBuilder);
-	fak->registerBuilder(new GSComboBoxBuilder);
-
-	//table
-	fak->registerBuilder(new GSTableBuilder);
-	fak->registerBuilder(new GSColumnBuilder);
-	fak->registerBuilder(new GSDelegateBuilder);
 
 	//QML
 	fak->registerBuilder(new GSQmlItemBuilder);

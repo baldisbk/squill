@@ -3,7 +3,7 @@
 
 #include "gsobject.h"
 
-class GSContext : public GSObject
+class GSCORESHARED_EXPORT GSContext : public GSObject
 {
 	Q_OBJECT
 public:

@@ -3,7 +3,7 @@
 
 #include "gsobject.h"
 
-class GSWidget : public GSObject
+class GSCORESHARED_EXPORT GSWidget : public GSObject
 {
 	Q_OBJECT
 public:
