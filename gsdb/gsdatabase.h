@@ -1,7 +1,7 @@
 #ifndef GSDATABASE_H
 #define GSDATABASE_H
 
-#include "gsobject.h"
+#include <gsobject.h>
 
 #include <QtSql/QSqlDatabase>
 

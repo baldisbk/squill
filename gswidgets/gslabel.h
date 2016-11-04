@@ -1,7 +1,7 @@
 #ifndef GSLABEL_H
 #define GSLABEL_H
 
-#include "gswidget.h"
+#include <gswidget.h>
 
 #include <QLabel>
 

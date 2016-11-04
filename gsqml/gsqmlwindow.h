@@ -1,7 +1,7 @@
 #ifndef GSQMLWINDOW_H
 #define GSQMLWINDOW_H
 
-#include "gsobject.h"
+#include <gsobject.h>
 #include "qmlcontainer.h"
 
 #include <QQuickItem>

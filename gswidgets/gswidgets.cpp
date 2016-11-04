@@ -1,5 +1,7 @@
 #include "gswidgets.h"
 
+#include "gsmainwindow.h"
+
 #include "gsbutton.h"
 #include "gslabel.h"
 #include "gslineedit.h"
@@ -16,6 +18,8 @@ GSWidgets::GSWidgets()
 QList<GSObjectBuilder *> GSWidgets::builders() const
 {
 	QList<GSObjectBuilder *> res;
+
+	res.append(new GSMainWindowBuilder);
 
 	//widgets
 	res.append(new GSButtonBuilder);

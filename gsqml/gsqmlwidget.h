@@ -1,7 +1,7 @@
 #ifndef GSQMLWIDGET_H
 #define GSQMLWIDGET_H
 
-#include "gswidget.h"
+#include <gswidget.h>
 #include "qmlcontainer.h"
 
 #include <QQuickItem>

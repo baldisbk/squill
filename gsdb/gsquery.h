@@ -1,7 +1,7 @@
 #ifndef GSQUERY_H
 #define GSQUERY_H
 
-#include "gsobject.h"
+#include <gsobject.h>
 
 class GSQuery : public GSObject
 {

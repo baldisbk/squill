@@ -1,7 +1,7 @@
 #ifndef GSMAINWINDOW_H
 #define GSMAINWINDOW_H
 
-#include "gswidget.h"
+#include <gswidget.h>
 
 #include <QMainWindow>
 #include <QGridLayout>

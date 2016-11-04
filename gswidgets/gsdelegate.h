@@ -1,7 +1,7 @@
 #ifndef GSDELEGATE_H
 #define GSDELEGATE_H
 
-#include "gsobject.h"
+#include <gsobject.h>
 
 class GSTable;
 class GSColumn;

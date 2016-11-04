@@ -1,7 +1,7 @@
 #ifndef GSCOMBOBOX_H
 #define GSCOMBOBOX_H
 
-#include "gswidget.h"
+#include <gswidget.h>
 
 #include <QComboBox>
 

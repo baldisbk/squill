@@ -1,7 +1,7 @@
 #ifndef GSTABLE_H
 #define GSTABLE_H
 
-#include "gswidget.h"
+#include <gswidget.h>
 
 #include <QTableView>
 #include <QAbstractItemModel>

@@ -1,7 +1,7 @@
 #ifndef GSCOLUMN_H
 #define GSCOLUMN_H
 
-#include "gsobject.h"
+#include <gsobject.h>
 
 class GSTable;
 

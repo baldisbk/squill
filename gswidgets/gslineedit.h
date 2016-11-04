@@ -1,7 +1,7 @@
 #ifndef GSLINEEDIT_H
 #define GSLINEEDIT_H
 
-#include "gswidget.h"
+#include <gswidget.h>
 
 #include <QLineEdit>
 

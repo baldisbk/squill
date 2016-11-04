@@ -3,7 +3,7 @@
 
 #include <QPushButton>
 
-#include "gswidget.h"
+#include <gswidget.h>
 
 class GSButton : public GSWidget {
 	Q_OBJECT

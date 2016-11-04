@@ -1,7 +1,7 @@
 #ifndef GSWIDGETS_H
 #define GSWIDGETS_H
 
-#include "gsobject.h"
+#include <gsobject.h>
 
 class GSWidgets : public QObject, SquillPluginInterface
 {

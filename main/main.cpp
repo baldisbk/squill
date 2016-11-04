@@ -3,14 +3,7 @@
 #include <QDir>
 #include <QPluginLoader>
 
-#include "gsmainwindow.h"
-
-#include "gsdatabase.h"
-#include "gsquery.h"
-
-#include "gsqmlitem.h"
-#include "gsqmlwidget.h"
-#include "gsqmlwindow.h"
+#include <gsobject.h>
 
 int main(int argc, char *argv[])
 {
@@ -43,17 +36,6 @@ int main(int argc, char *argv[])
 			qDebug() << QString("Error loading plugin %1: %2").
 				arg(fileName).arg(pluginLoader.errorString());
 	}
-
-	fak->registerBuilder(new GSMainWindowBuilder);
-
-	// base
-	fak->registerBuilder(new GSDatabaseBuilder);
-	fak->registerBuilder(new GSQueryBuilder);
-
-	//QML
-	fak->registerBuilder(new GSQmlItemBuilder);
-	fak->registerBuilder(new GSQmlWidgetBuilder);
-	fak->registerBuilder(new GSQmlWindowBuilder);
 
 	GSObject* obj = GSObjectFactory::factory()->makeObject(&src);
 	if (!obj) {

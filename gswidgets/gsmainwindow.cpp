@@ -2,7 +2,7 @@
 
 #include <QLabel>
 
-#include "gscontext.h"
+#include <gscontext.h>
 
 GSMainWindow::GSMainWindow(GSObject */*parent*/): GSWidget()
 {

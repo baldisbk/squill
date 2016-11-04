@@ -4,7 +4,7 @@
 #include <QtSql/QSqlRecord>
 #include <QtSql/QSqlError>
 
-#include "gscontext.h"
+#include <gscontext.h>
 
 GSQuery::GSQuery(GSObject *parent): GSObject(parent)
 {

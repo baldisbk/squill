@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += widgets
+QT       += widgets qml
 
 TEMPLATE = lib
 
@@ -20,7 +20,8 @@ SOURCES += gswidgets.cpp \
     gsdelegate.cpp \
     gscombobox.cpp \
     gscolumn.cpp \
-    gsbutton.cpp
+    gsbutton.cpp \
+    gsmainwindow.cpp
 
 HEADERS += gswidgets.h \
     gstable.h \
@@ -29,6 +30,7 @@ HEADERS += gswidgets.h \
     gsdelegate.h \
     gscombobox.h \
     gscolumn.h \
-    gsbutton.h
+    gsbutton.h \
+    gsmainwindow.h
 
 LIBS += -L.. -lgscore
