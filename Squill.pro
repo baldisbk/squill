@@ -3,7 +3,8 @@ SUBDIRS = main \
     gswidgets \
     gscore \
     gsdb \
-    gsqml
+    gsqml \
+    editor
 
 gswidgets.depends = gscore
 gsqml.depends = gscore
